@@ -10,21 +10,28 @@ import { LoginUser } from './login-user/login-user';
 import { RegisterUser } from './register-user/register-user';
 import { ProfileUser } from './profile-user/profile-user';
 import { MessageUser } from './message-user/message-user';
+import { Header } from './header/header';
 
 
 export const routes: Routes = [
-  {path: '', redirectTo:'/home', pathMatch:'full'},
-  {path: 'home', component:Home},
-  {path: 'newproduct', component: NewProduct},
-  {path: 'viewMyProduct', component:ViewMyProduct},
-  {path: 'editMyProduct/:id', component:EditMyProduct},
-  {path: 'detailViewProduct/:id', component:DetailViewProduct},
-  {path: 'myFavourites', component:MyFavourites},
-  {path: 'allUser', component:AllUser},
-  {path: 'loginUser', component:LoginUser},
-  {path: 'registerUser', component:RegisterUser},
-  {path: 'profileUser', component:ProfileUser},
-  {path: 'profileUser/:userId', component:ProfileUser},
-  {path: 'messageUser', component:MessageUser},
-  {path: '**', redirectTo: 'home'}
+  {
+    path:'',
+    component:Header,
+    children:[
+      {path: '', component:Home},
+      {path: 'home', component:Home},
+      {path: 'newproduct', component: NewProduct},
+      {path: 'viewMyProduct', component:ViewMyProduct},
+      {path: 'editMyProduct/:id', component:EditMyProduct},
+      {path: 'detailViewProduct/:id', component:DetailViewProduct},
+      {path: 'myFavourites', component:MyFavourites},
+      {path: 'allUser', component:AllUser},
+      {path: 'loginUser', component:LoginUser},
+      {path: 'registerUser', component:RegisterUser},
+      {path: 'profileUser', component:ProfileUser},
+      {path: 'profileUser/:userId', component:ProfileUser},
+      {path: 'messageUser', component:MessageUser}
+    ]
+  }
+  
 ];
