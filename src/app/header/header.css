@@ -1,0 +1,43 @@
+.header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+    padding: 0 24px;
+  }
+  .header-inner {
+    max-width: 1100px; margin: 0 auto;
+    height: 60px; display: flex; align-items: center; gap: 16px;
+  }
+  .logo {
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 22px;
+    color: var(--gyul); text-decoration: none;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .logo span { font-size: 22px; }
+  .header-greeting {
+    font-size: 13px; color: var(--text2);
+    margin-left: 8px;
+  }
+  .header-greeting strong { color: var(--text); font-weight: 500; }
+  .header-nav {
+    margin-left: auto; display: flex; align-items: center; gap: 4px;
+  }
+  .nav-link {
+    font-size: 13px; font-weight: 500; color: var(--text2);
+    padding: 6px 12px; border-radius: 8px; text-decoration: none;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .nav-link:hover { color: var(--text); background: var(--surface2); }
+  .nav-link.active { color: var(--gyul); }
+  .nav-link.admin-link {
+    background: #1A1A18; color: #fff;
+  }
+  .nav-link.admin-link:hover { background: #333; }
+  .nav-btn-logout {
+    font-size: 13px; font-weight: 500; color: var(--text3);
+    padding: 6px 12px; border-radius: 8px; background: transparent;
+    text-decoration: none; cursor: pointer; border: none;
+    font-family: var(--font-body);
+  }
+  .nav-btn-logout:hover { color: var(--text); background: var(--surface2); }

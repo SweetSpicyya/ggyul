@@ -1,3 +1,17 @@
-<p>header works!</p>
-
+<header class="header" id="main-header">
+  <div class="header-inner">
+    <a class="logo" href="#" onclick="showPage('home')">
+      <span>🍊</span> 귤마켓
+    </a>
+    <span class="header-greeting">안녕하세요, <strong id="greet-name">김지수</strong>님</span>
+    <nav class="header-nav">
+      <a class="nav-link active" href="#" onclick="showPage('home')">🏠 홈</a>
+      <a class="nav-link" href="#" onclick="showPage('my-items')">📦 내 물건</a>
+      <a class="nav-link" href="#" onclick="showPage('favourites')">❤️ 찜목록</a>
+      <a class="nav-link" href="#" onclick="showPage('profile')">👤 프로필</a>
+      <a class="nav-link admin-link" href="#" id="all-users-link" onclick="showPage('all-users')">🛡 전체회원</a>
+      <button class="nav-btn-logout" onclick="showPage('login')">로그아웃</button>
+    </nav>
+  </div>
+</header>
 <router-outlet></router-outlet>
