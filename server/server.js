@@ -33,6 +33,34 @@ app.get('/api/user', async (req, res) => {
   }
 });
 
+app.post('/api/registerproduct', async (req, res) => {
+  try{
+    await client.connect();
+    const database = client.db('ggyual_database');
+    const collection = database.collection('product');
+
+    const pData = {
+      title: req.body.title,
+      city_name: req.body.city,
+      location_name: req.body.location,
+      product_condition: req.body.condition,
+      giveaway: req.body.giveaway,
+      year_purchase: req.body.year,
+      price: req.body.price,
+      date_avaliable: req.body.available,
+      user_id: 1111,
+      createdAt: new Date()
+    };
+    const result = await collection.insertOne(pData);
+
+    res.status(201).json({
+      message: "Successd to save!",
+      insertedId: result.insertedId,
+      data: pData
+    });
+
+  }catch (e){
+    res.status(500).json({message: e.message});
 app.post('/api/user/register',async(req,res)=>{
   try{ 
     await client.connect();
@@ -55,3 +83,5 @@ app.post('/api/user/register',async(req,res)=>{
 app.listen(port, () => {
   console.log(`✅ 백엔드 서버가 http://localhost:${port} 에서 실행 중입니다.`);
 });
+
+
