@@ -44,7 +44,7 @@ app.post('/api/registerproduct', async (req, res) => {
     const database = client.db('ggyual_database');
     const collection = database.collection('product');
 
-    const pData = {
+    const update_pData = {
       title: req.body.title,
       city_name: req.body.city,
       location_name: req.body.location,
@@ -62,6 +62,46 @@ app.post('/api/registerproduct', async (req, res) => {
       message: "Successd to save!",
       insertedId: result.insertedId,
       data: pData
+    });
+
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+})
+
+
+app.put('/api/updateproduct/:id', async (req, res) => {
+  try {
+    const productId = req.params.id;
+
+    await client.connect();
+    const database = client.db('ggyual_database');
+    const collection = database.collection('product');
+
+    const pData = {
+      title: req.body.title,
+      city_name: req.body.city,
+      location_name: req.body.location,
+      product_condition: req.body.condition,
+      giveaway: req.body.giveaway,
+      year_purchase: req.body.year,
+      price: req.body.price,
+      date_avaliable: req.body.available,
+      user_id: 1111,
+      createdAt: new Date()
+    };
+
+    const result = await collection.updateOne(
+      {_id: new ObjectId(productId)},
+    { $set: pData }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ message: "Fail to find the product" });
+    }
+
+    res.status(201).json({
+      message: "Successd to update!", result
     });
 
   } catch (e) {

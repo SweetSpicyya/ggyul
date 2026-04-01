@@ -70,7 +70,7 @@
             </div>
             <div class="form-group">
               <label class="label">Available</label>
-              <input matInput type="date" class="input-field" formControlName="available" placeholder="" [matDatepicker]="picker" [min]="todayDate">
+              <input matInput class="input-field" formControlName="available" placeholder="" [matDatepicker]="picker" [min]="todayDate">
               <mat-datepicker #picker></mat-datepicker>
               @if(registerForm.get('available')?.hasError('required') && registerForm.get('available')?.touched){
                 <mat-error class="custom-error">This field is required</mat-error>
