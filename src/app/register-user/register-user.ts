@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../user.service';
+import { User } from '../user.model';
 
 @Component({
   selector: 'app-register-user',
@@ -10,7 +11,7 @@ import { UserService } from '../user.service';
 })
 export class RegisterUser {
   constructor(private userService: UserService) {}
-  userList: any[] = [];
+  userList: User[] = [];
   
   firstName:string = '';
   lastName:string = '';
@@ -25,7 +26,7 @@ export class RegisterUser {
 
   loadUsers() {
     this.userService.getUsers().subscribe({
-      next: (data) => {
+      next: (data:User[]) => {
         this.userList = data;
         console.log('가져온 유저 데이터:', this.userList);
       },
@@ -36,9 +37,26 @@ export class RegisterUser {
   }
   doRegister(){
     console.log('click the register button');
-    if(this.validateRegistData()){
-      
-    };
+    if(!this.validateRegistData()) return;
+
+    const formData : User = {
+      first_name : this.firstName,
+      last_name : this.lastName,
+      email:this.email,
+      password:this.password,
+      birth_date: this.birthday,
+      admin : 'USER'
+    }
+    this.userService.registerUser(formData).subscribe({
+      next:(res)=>{
+        alert('회원가입이 완료되었습니다.');
+        console.log('server : ', res);
+      },
+      error:(err)=>{
+        alert('error happend');
+        console.error(err);
+      }
+    })
   }
   
   validateRegistData() : boolean{

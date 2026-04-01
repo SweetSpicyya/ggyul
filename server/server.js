@@ -29,9 +29,27 @@ app.get('/api/user', async (req, res) => {
     console.error("데이터 불러오기 에러:", error);
     res.status(500).json({ message: "서버 에러가 발생했습니다.", error: error.message });
   } finally {
-    // await client.close();
+    await client.close();
   }
 });
+
+app.post('/api/user/register',async(req,res)=>{
+  try{ 
+    await client.connect();
+    const database = client.db('ggyual_database');
+    const collection = database.collection('user');
+
+    const newUser = req.body;
+    const result = await collection.insertOne(newUser);
+    console.log("success register : ", result.insertedId);
+    res.status(201).json({ message: "new register!", id: result.insertedId });
+  } catch (error){
+    console.log('register error : ', error);
+    res.status(500).json({message:"fail to save", error:error.message})
+  } finally{
+    await client.close();
+  }
+})
 
 // 4. 서버 실행
 app.listen(port, () => {
