@@ -1,1 +1,99 @@
-<p>new-product works!</p>
+<div class="page" id="page-new-item">
+  <div class="container" style="max-width:700px;">
+    <button class="btn-ghost" style="margin-bottom:16px;" (click)="goToHome()">← Back</button>
+    <div class="page-title">🆕 Register New Product</div>
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="form-card">
+        <div style="display:flex;flex-direction:column;gap:18px;">
+          <div class="form-grid">
+            <div class="form-group full">
+              <label class="label">Title</label>
+              <input type="text" class="input-field" formControlName="title" placeholder="iPhone17 Pro">
+              @if(registerForm.get('title')?.hasError('required') && registerForm.get('title')?.touched){
+                <mat-error class="custom-error">This field is required</mat-error>
+              }
+            </div>
+            <div class="form-group">
+              <label class="label">City</label>
+              <input type="text" class="input-field" formControlName="city" placeholder="Vancouver">
+              @if(registerForm.get('city')?.hasError('required') && registerForm.get('city')?.touched){
+                <mat-error class="custom-error">This field is required</mat-error>
+              }
+            </div>
+            <div class="form-group">
+              <label class="label">Location</label>
+              <input type="text" class="input-field" formControlName="location" placeholder="Richmond">
+              @if(registerForm.get('location')?.hasError('required') && registerForm.get('location')?.touched){
+                <mat-error class="custom-error">This field is required</mat-error>
+              }
+            </div>
+            <div class="form-group">
+              <label class="label">Price (CAD)</label>
+              <input type="number" class="input-field" formControlName="price" placeholder="0">
+              @if(registerForm.get('price')?.invalid && registerForm.get('price')?.touched){
+                @if(registerForm.get('price')?.hasError('required')){
+                  <mat-error class="custom-error">This field is required</mat-error>
+                } @else if (registerForm.get('price')?.hasError('min')){
+                  <mat-error class="custom-error">Value must be more than 0</mat-error>
+                }
+              }
+            </div>
+            <div class="form-group">
+              <label class="label">Purchase Year</label>
+              <input type="number" class="input-field" formControlName="year" placeholder="2023">
+              @if(registerForm.get('year')?.invalid && registerForm.get('year')?.touched){
+                @if(registerForm.get('year')?.hasError('required')){
+                  <mat-error class="custom-error">This field is required</mat-error>
+                } @else if (registerForm.get('year')?.hasError('min')){
+                  <mat-error class="custom-error">Value must be more than 2000</mat-error>
+                } @else if (registerForm.get('year')?.hasError('max')){
+                  <mat-error class="custom-error">Value must be less than 2026</mat-error>
+                }
+              }
+            </div>
+            <div class="form-group full">
+              <label class="label">Condition</label>
+              <div class="quality-selector">
+                <button type="button" class="quality-option"
+                        [class.selected]="registerForm.get('condition')?.value === 0"
+                        (click)="setCondition(0)">🌟 BNIB</button>
+                <button type="button" class="quality-option"
+                        [class.selected]="registerForm.get('condition')?.value === 1"
+                        (click)="setCondition(1)">💎 Like New</button>
+                <button type="button" class="quality-option"
+                        [class.selected]="registerForm.get('condition')?.value === 2"
+                        (click)="setCondition(2)">👍 Excellent</button>
+                <button type="button" class="quality-option"
+                        [class.selected]="registerForm.get('condition')?.value === 3"
+                        (click)="setCondition(3)">👌 Good</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="label">Available</label>
+              <input matInput type="date" class="input-field" formControlName="available" placeholder="" [matDatepicker]="picker" [min]="todayDate">
+              <mat-datepicker #picker></mat-datepicker>
+              @if(registerForm.get('available')?.hasError('required') && registerForm.get('available')?.touched){
+                <mat-error class="custom-error">This field is required</mat-error>
+              } @else if (registerForm.get('available')?.hasError('matDatepickerMin') && registerForm.get('available')?.touched){
+                <mat-error class="custom-error">Date must be later than today</mat-error>
+              }
+            </div>
+
+
+            <div class="form-group">
+              <label class="label">GIVEAWAY</label>
+              <select class="input-field" formControlName="giveaway">>
+                <option [ngValue]="false">No</option>
+                <option [ngValue]="true">Yes</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;margin-top:8px;">
+            <button class="btn-secondary" style="flex:1;" (click)="goToHome()">Cancel</button>
+            <button class="btn-primary" style="flex:2;">Register</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
