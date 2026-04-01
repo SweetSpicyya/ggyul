@@ -29,7 +29,7 @@ app.get('/api/user', async (req, res) => {
     console.error("데이터 불러오기 에러:", error);
     res.status(500).json({ message: "서버 에러가 발생했습니다.", error: error.message });
   } finally {
-    await client.close();
+    // await client.close();
   }
 });
 
