@@ -61,6 +61,21 @@ app.post('/api/registerproduct', async (req, res) => {
 
   }catch (e){
     res.status(500).json({message: e.message});
+app.post('/api/user/register',async(req,res)=>{
+  try{ 
+    await client.connect();
+    const database = client.db('ggyual_database');
+    const collection = database.collection('user');
+
+    const newUser = req.body;
+    const result = await collection.insertOne(newUser);
+    console.log("success register : ", result.insertedId);
+    res.status(201).json({ message: "new register!", id: result.insertedId });
+  } catch (error){
+    console.log('register error : ', error);
+    res.status(500).json({message:"fail to save", error:error.message})
+  } finally{
+    await client.close();
   }
 })
 

@@ -1,1 +1,39 @@
-<p>register-user works!</p>
+<div class="page" id="page-register">
+  <div class="page-sm" style="max-width:560px;">
+    <div class="form-card">
+      <div class="page-title">Register</div>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="label">First Name</label>
+            <input type="text" class="input-field" name="firstName" [(ngModel)]="firstName" placeholder="Peter">
+          </div>
+          <div class="form-group">
+            <label class="label">Last Name</label>
+            <input type="text" class="input-field" name="lastName" [(ngModel)]="lastName" placeholder="Parker">
+          </div>
+          <div class="form-group full">
+            <label class="label">E-mail</label>
+            <input type="email" class="input-field" name="email" [(ngModel)]="email" placeholder="example@email.com">
+          </div>
+          <div class="form-group">
+            <label class="label">Password</label>
+            <input type="password" class="input-field" name="password" [(ngModel)]="password" placeholder="At least 8 characters">
+          </div>
+          <div class="form-group">
+            <label class="label">Password Confirm</label>
+            <input type="password" class="input-field" name="confirmPw" [(ngModel)]="confirmPw" placeholder="Confirm the Password">
+          </div>
+          <div class="form-group full">
+            <label class="label">BirthDay</label>
+            <input type="date" class="input-field" name="birthday" [(ngModel)]="birthday">
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:8px;">
+          <button class="btn-secondary" style="flex:1;">Cancle</button>
+          <button class="btn-primary" style="flex:2;" (click)="doRegister()">Register</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
