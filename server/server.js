@@ -61,6 +61,9 @@ app.post('/api/registerproduct', async (req, res) => {
 
   }catch (e){
     res.status(500).json({message: e.message});
+  }
+});
+
 app.post('/api/user/register',async(req,res)=>{
   try{ 
     await client.connect();
@@ -75,9 +78,56 @@ app.post('/api/user/register',async(req,res)=>{
     console.log('register error : ', error);
     res.status(500).json({message:"fail to save", error:error.message})
   } finally{
-    await client.close();
+    // await client.close();
   }
-})
+});
+
+app.post('/api/user/emailCheck',async(req,res)=>{
+  try{ 
+    await client.connect();
+    const database = client.db('ggyual_database');
+    const collection = database.collection('user');
+
+    const {email} = req.body;
+    
+    const result = await collection.findOne({email:email});
+    console.log("success register : ", result);
+  
+    if(result){
+      return res.status(200).json({exists:false, message:"email is already taken!"});
+    } else {
+      return res.status(200).json({exists:true, message:"email is available."});
+    }
+  } catch (error){
+    console.log('register error : ', error);
+    res.status(500).json({message:"fail to save", error:error.message})
+  } finally{
+    // await client.close();
+  }
+});
+app.post('/api/user/login',async(req,res)=>{
+  try{ 
+    await client.connect();
+    const database = client.db('ggyual_database');
+    const collection = database.collection('user');
+
+    const {email,password} = req.body;
+    
+    const result = await collection.findOne({email, password});
+    console.log("login success : ", result);
+  
+    if(result){
+      return res.status(200).json({success:true, message:"login Success", loginData : result});
+    } else {
+      return res.status(200).json({success:false, message:"doesn't have login data"});
+    }
+  } catch (error){
+    console.log('register error : ', error);
+    res.status(500).json({message:"login error", error:error.message})
+  } finally{
+    // await client.close();
+  }
+});
 
 // 4. 서버 실행
 app.listen(port, () => {

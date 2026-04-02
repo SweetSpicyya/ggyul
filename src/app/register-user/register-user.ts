@@ -2,15 +2,19 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../user.service';
 import { User } from '../user.model';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-register-user',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './register-user.html',
   styleUrl: './register-user.css',
 })
 export class RegisterUser {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private router: Router
+  ) {}
   userList: User[] = [];
   
   firstName:string = '';
@@ -21,40 +25,36 @@ export class RegisterUser {
   birthday:string = '';
 
   ngOnInit() {
-    this.loadUsers();
+    // this.loadUsers();
   }
 
-  loadUsers() {
-    this.userService.getUsers().subscribe({
-      next: (data:User[]) => {
-        this.userList = data;
-        console.log('가져온 유저 데이터:', this.userList);
-      },
-      error: (err) => {
-        console.error('데이터 로딩 실패:', err);
-      }
-    });
-  }
+  // loadUsers() {
+  //   this.userService.getUsers().subscribe({
+  //     next: (data:User[]) => {
+  //       this.userList = data;
+  //       console.log('가져온 유저 데이터:', this.userList);
+  //     },
+  //     error: (err) => {
+  //       console.error('데이터 로딩 실패:', err);
+  //     }
+  //   });
+  // }
   doRegister(){
     console.log('click the register button');
     if(!this.validateRegistData()) return;
-
-    const formData : User = {
-      first_name : this.firstName,
-      last_name : this.lastName,
-      email:this.email,
-      password:this.password,
-      birth_date: this.birthday,
-      admin : 'USER'
-    }
-    this.userService.registerUser(formData).subscribe({
+    this.userService.checkEmail(this.email).subscribe({
       next:(res)=>{
-        alert('회원가입이 완료되었습니다.');
-        console.log('server : ', res);
+        console.log('email check : ', res);
+        if(res.exists){
+          this.registProcess();
+        } else {
+          alert("this email is already taken.");
+        }
       },
       error:(err)=>{
-        alert('error happend');
+        alert("email check : err.message"+ err);
         console.error(err);
+        return false;
       }
     })
   }
@@ -76,7 +76,7 @@ export class RegisterUser {
     } else if(!this.validatePassword()){
       alert("Password must contain Letters, Numbers, A character that is neither a letter nor a number and at least 6 characters.");
       return false;
-    }  
+    }
     return true;
   }
   validateEmail():boolean {
@@ -87,8 +87,26 @@ export class RegisterUser {
     const pwRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{6,}$/;
     return pwRegex.test(this.password);
   };
-  validateTaken():boolean{
+  registProcess(){
+    const formData : User = {
+      first_name : this.firstName,
+      last_name : this.lastName,
+      email:this.email,
+      password:this.password,
+      birth_date: new Date(this.birthday),
+      admin : 'USER'
+    }
+    this.userService.registerUser(formData).subscribe({
+      next:(res)=>{
+        alert('successfully register.');
+        console.log('server : ', res);
+        this.router.navigate(['/loginUser']);
+      },
+      error:(err)=>{
+        alert('error happend.');
+        console.error(err);
+      }
+    })
     
-    return true;
   }
 }
