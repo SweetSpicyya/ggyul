@@ -52,9 +52,6 @@ export class NewProduct implements OnInit{
   onSubmit(){
     if(this.registerForm.valid){
       const formData = this.registerForm.value;
-
-      console.log(formData);
-
       this.productsService.registerProduct(formData).subscribe({
         next: (response) => {
           this.router.navigate(['/home']);
