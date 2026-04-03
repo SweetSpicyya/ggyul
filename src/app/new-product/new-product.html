@@ -70,8 +70,18 @@
             </div>
             <div class="form-group">
               <label class="label">Available</label>
-              <input matInput class="input-field" formControlName="available" placeholder="" [matDatepicker]="picker" [min]="todayDate">
-              <mat-datepicker #picker></mat-datepicker>
+              <div class="datepicker-wrapper"> <input
+                matInput
+                class="input-field"
+                formControlName="available"
+                [matDatepicker]="picker"
+                [min]="todayDate"
+                placeholder="Select a date"
+                (click)="picker.open()"
+              >
+                <mat-datepicker-toggle [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </div>
               @if(registerForm.get('available')?.hasError('required') && registerForm.get('available')?.touched){
                 <mat-error class="custom-error">This field is required</mat-error>
               } @else if (registerForm.get('available')?.hasError('matDatepickerMin') && registerForm.get('available')?.touched){
@@ -81,7 +91,7 @@
 
 
             <div class="form-group">
-              <label class="label">GIVEAWAY</label>
+              <label class="label">Giveaway</label>
               <select class="input-field" formControlName="giveaway">>
                 <option [ngValue]="false">No</option>
                 <option [ngValue]="true">Yes</option>

@@ -2,11 +2,11 @@ import { ChangeDetectorRef, Component, inject, OnInit, HostListener } from '@ang
 import { ProductsService } from '../../../services/products-service';
 import { RouterLink, Router } from '@angular/router';
 import Swal from 'sweetalert2';
-import { ConsoleLogger } from '@angular/compiler-cli';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
   templateUrl: './home.html',
   styleUrl: './home.css',
   standalone: true,
@@ -83,9 +83,12 @@ export class Home  implements OnInit  {
 
 
   activeFilter: string | null = null;
-  selectedCity: string = '';
-  selectedPrice: number | null = null;
+  selectedLocation: string = '';
   selectedCondition: number | null = null;
+  minPrice: number | null = null;
+  maxPrice: number | null = null;
+
+  currentSort: string = 'newest';
 
   toggleFilter(event: Event, type: string) {
     event.stopPropagation();
@@ -98,22 +101,83 @@ export class Home  implements OnInit  {
   }
 
   setCity(city: string) {
-    this.selectedCity = city;
+    this.selectedLocation = city;
     this.activeFilter = null;
     this.loadProducts();
   }
 
+  getPriceLabel(): string {
+    if(this.minPrice !== null && this.maxPrice !== null){
+      return `$ ${this.minPrice} - $ ${this.maxPrice}`
+    }
+    if(this.minPrice !== null){
+      return `Over $ ${this.minPrice}`;
+    }
+    if(this.maxPrice !== null){
+      return `Under $ ${this.maxPrice}`;
+    }
+    return 'Price';
+  }
+
+  setPrice(){
+    this.activeFilter = null;
+    this.loadProducts();
+  }
+
+  setCondition(condition: number) {
+    this.selectedCondition = condition;
+    this.activeFilter = null;
+    this.loadProducts();
+  }
+
+  setSort(sortType: string){
+    this.currentSort = sortType;
+    this.loadProducts();
+  }
+
   loadProducts() {
-    const params: any = {};
-    if (this.selectedCity) params.city = this.selectedCity;
-    if (this.selectedPrice) params.maxPrice = this.selectedPrice;
-    if (this.selectedPrice) params.minPrice = this.selectedPrice;
-    if (this.selectedCondition) params.condition = this.selectedPrice;
+    const params: any = {
+      sort: this.currentSort
+    };
+    if (this.selectedLocation) params.location = this.selectedLocation;
+    if (this.minPrice) params.minPrice = this.minPrice;
+    if (this.maxPrice) params.maxPrice = this.maxPrice;
+    if (this.selectedCondition) params.condition = this.selectedCondition;
 
     this.productService.getFilteredProducts(params).subscribe((data: any) => {
       this.products = data;
       this.cdr.detectChanges();
     });
+  }
+
+
+  getRelativeTime(date: any): string {
+    if (!date) return '';
+
+    const now = new Date();
+    const created = new Date(date);
+    const diffInSeconds = Math.floor((now.getTime() - created.getTime()) / 1000);
+
+    if (diffInSeconds < 60) return 'Just now';
+
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) return `${diffInMinutes}m`;
+
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours}h`;
+
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 30) return `${diffInDays}d`;
+
+    const diffInMonths = Math.floor(diffInDays / 30);
+    if (diffInMonths < 12) return `${diffInMonths}mo`;
+
+    return `${Math.floor(diffInMonths / 12)}y`;
+  }
+
+
+  goToRegister() {
+    this.router.navigate(['/newproduct']);
   }
 
 }

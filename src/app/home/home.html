@@ -10,38 +10,59 @@
     <!-- Filters -->
     <div class="filters-row">
       <div class="filter-chip"
-           [class.active]="selectedCity"
+           [class.active]="selectedLocation"
            (click)="toggleFilter($event, 'location')">
-        📍 {{ selectedCity !== '' ? selectedCity : 'Location' }} <span class="arrow">▾</span>
+        📍 {{ selectedLocation !== '' ? selectedLocation : 'Location' }} <span class="arrow">▾</span>
 
         @if(activeFilter === 'location') {
           <ul class="filter-dropdown" (click)="$event.stopPropagation()">
             <li (click)="setCity('')">All</li>
-            <li (click)="setCity('Richmond')">Richmond</li>
-            <li (click)="setCity('Vancouver')">Vancouver</li>
             <li (click)="setCity('Burnaby')">Burnaby</li>
             <li (click)="setCity('Coquitlam')">Coquitlam</li>
+            <li (click)="setCity('Downtown')">Downtown</li>
+            <li (click)="setCity('Richmond')">Richmond</li>
           </ul>
         }
       </div>
 
+      <div class="filter-chip" (click)="toggleFilter($event, 'price')">
+        💰 {{ getPriceLabel() }} <span>▾</span>
 
-      <div class="filter-chip" [class.active]="selectedPrice" (click)="toggleFilter($event, 'price')">
-        💰 {{ selectedPrice ? '$ ' + selectedPrice : 'Price' }} <span>▾</span>
+        @if(activeFilter === 'price') {
+          <div class="filter-dropdown price-filter" (click)="$event.stopPropagation()">
+            <div class="price-inputs">
+              <input type="number" [(ngModel)]="minPrice" placeholder="Min ($)">
+              <span>~</span>
+              <input type="number" [(ngModel)]="maxPrice" placeholder="Max ($)">
+            </div>
+            <button class="apply-btn" (click)="setPrice()">Apply</button>
+          </div>
+        }
       </div>
 
       <div class="filter-chip"
            [class.active]="selectedCondition"
            (click)="toggleFilter($event, 'condition')">
-        ✨ {{ selectedCondition || 'Condition' }} <span class="arrow">▾</span>
+        @if(selectedCondition === 0){
+          🌟 BNIB
+        } @else if (selectedCondition === 1){
+          💎 Like New
+        } @else if (selectedCondition === 2){
+          👍 Excellent
+        } @else if (selectedCondition === 3){
+          👌 Good
+        } @else{
+          ✨ All
+        }
+        <span class="arrow">▾</span>
 
         @if(activeFilter === 'condition') {
           <ul class="filter-dropdown" (click)="$event.stopPropagation()">
-            <li (click)="setCity('Condition')">All</li>
-            <li (click)="setCity('Richmond')">🌟 BNIB</li>
-            <li (click)="setCity('Vancouver')">💎 Like New</li>
-            <li (click)="setCity('Burnaby')">👍 Excellent</li>
-            <li (click)="setCity('Burnaby')">👌 Good</li>
+            <li (click)="setCondition(-1)">All</li>
+            <li (click)="setCondition(0)">🌟 BNIB</li>
+            <li (click)="setCondition(1)">💎 Like New</li>
+            <li (click)="setCondition(2)">👍 Excellent</li>
+            <li (click)="setCondition(3)">👌 Good</li>
           </ul>
         }
       </div>
@@ -50,10 +71,10 @@
 
     <!-- Sort -->
     <div class="sort-row">
-      <span class="sort-label">정렬:</span>
-      <button class="sort-btn active" onclick="setSort(this)">최신순</button>
-      <button class="sort-btn" onclick="setSort(this)">가격 낮은순</button>
-      <button class="sort-btn" onclick="setSort(this)">가격 높은순</button>
+      <span class="sort-label">Sort by:</span>
+      <button class="sort-btn" [class.active]="currentSort === 'newest'" (click)="setSort('newest')">Newest</button>
+      <button class="sort-btn" [class.active]="currentSort === 'priceLow'" (click)="setSort('priceLow')">Lowest Price</button>
+      <button class="sort-btn" [class.active]="currentSort === 'priceHigh'" (click)="setSort('priceHigh')">Highest Price</button>
     </div>
 
     <!-- Products Grid -->
@@ -79,6 +100,9 @@
             <div class="product-price ${p.free ? 'free' : ''}">{{p.free === true ? 'Free 🍊' : '$ ' + p.price }}</div>
           </div>
           <div class="product-footer">
+            <span class="time-stamp">
+              {{ getRelativeTime(p.createdAt) }}
+            </span>
             <button
               class="fav-btn"
               [class.active]="p.isFavourite"
@@ -88,7 +112,16 @@
           </div>
         </div>
       } @empty {
-        <span>There is no products!</span>
+        <div class="empty-products">
+          <div class="empty-illustration">
+            <div class="tangerine-wrap">
+              <span class="tangerine">🍊</span>
+              <div class="tangerine-shadow"></div>
+            </div>
+          </div>
+          <p class="empty-title">No items available</p>
+          <button class="btn-primary" (click)="goToRegister()">+ Add yours</button>
+        </div>
       }
     </div>
   </div>

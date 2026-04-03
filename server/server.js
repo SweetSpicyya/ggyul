@@ -62,7 +62,7 @@ app.post('/api/registerproduct', async (req, res) => {
   try {
     const collection = database.collection('product');
 
-    const update_pData = {
+    const pData = {
       title: req.body.title,
       city_name: req.body.city,
       location_name: req.body.location,
@@ -85,7 +85,7 @@ app.post('/api/registerproduct', async (req, res) => {
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
-})
+});
 
 
 app.put('/api/updateproduct/:id', async (req, res) => {
@@ -166,27 +166,32 @@ app.get('/api/favorites/:userId', async (req, res) => {
 
 app.get('/api/filter/products', async (req, res) => {
   try {
-    const { city, maxPrice, minPrice, condition } = req.query;
+    const { location, minPrice, maxPrice, condition, sort } = req.query;
     let query = {};
 
-    if (city) {
-      query.location_name = { $regex: city, $options: 'i' };
+    if (location) {
+      query.location_name = { $regex: location, $options: 'i' };
     }
 
-    if (maxPrice || minPrice) {
-      query.price = { $lte: parseInt(maxPrice), $options: 'i' };
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if(minPrice) query.price.$gte = parseInt(minPrice);
+      if(maxPrice) query.price.$lte = parseInt(maxPrice);
     }
 
     if (condition) {
-      query.product_condition = { $regex: condition, $options: 'i' };
+      query.product_condition = parseInt(condition);
     }
 
-    console.log(query)
+    let sortQuery = { _id: -1};
+    if(sort === 'priceLow'){
+      sortQuery = {price: 1};
+    }else if(sort === 'priceHigh'){
+      sortQuery = {price: -1};
+    }
 
     const collection = database.collection('product');
-    const products = await collection.find(query).sort({ _id: -1 }).toArray();
-
-    console.log(products)
+    const products = await collection.find(query).sort(sortQuery).toArray();
 
     res.status(200).json(products);
   } catch (e) {

@@ -43,6 +43,17 @@ export class NewProduct implements OnInit{
   }
 
   ngOnInit() {
+    this.registerForm.get('giveaway')?.valueChanges.subscribe((isGiveaway: boolean) => {
+      if (isGiveaway) {
+        this.registerForm.patchValue({
+          price: 0
+        });
+
+        this.registerForm.get('price')?.disable();
+      } else {
+        this.registerForm.get('price')?.enable();
+      }
+    });
   }
 
   setCondition(value: number){
