@@ -1,0 +1,22 @@
+.datepicker-wrapper {
+  position: relative; /* 자식 요소인 toggle의 기준점 */
+  display: flex;
+  align-items: center;
+}
+
+.datepicker-wrapper .input-field {
+  width: 100%;
+  padding-right: 40px; /* 아이콘과 글자가 겹치지 않게 오른쪽 여백 확보 */
+}
+
+/* Angular Material 토글 버튼 위치 강제 조정 */
+.datepicker-wrapper mat-datepicker-toggle {
+  position: absolute;
+  right: 5px; /* input 창 안쪽 오른쪽 끝에 배치 */
+  color: #FF6B2B; /* 리치몬드 귤색 포인트! */
+}
+
+/* Material 버튼 특유의 배경이나 테두리가 거슬린다면 */
+::ng-deep .mat-mdc-icon-button {
+  --mdc-icon-button-state-layer-size: 32px; /* 크기 조절 */
+}

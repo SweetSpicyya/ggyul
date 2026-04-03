@@ -1,1 +1,128 @@
-<p>home works!</p>
+<div class="page" id="page-home">
+  <div class="container">
+    <!-- Search -->
+    <div class="search-bar">
+      <span>🔍</span>
+      <input type="text" placeholder="어떤 물건을 찾고 있나요?">
+      <button class="btn-primary btn-sm">검색</button>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-row">
+      <div class="filter-chip"
+           [class.active]="selectedLocation"
+           (click)="toggleFilter($event, 'location')">
+        📍 {{ selectedLocation !== '' ? selectedLocation : 'Location' }} <span class="arrow">▾</span>
+
+        @if(activeFilter === 'location') {
+          <ul class="filter-dropdown" (click)="$event.stopPropagation()">
+            <li (click)="setCity('')">All</li>
+            <li (click)="setCity('Burnaby')">Burnaby</li>
+            <li (click)="setCity('Coquitlam')">Coquitlam</li>
+            <li (click)="setCity('Downtown')">Downtown</li>
+            <li (click)="setCity('Richmond')">Richmond</li>
+          </ul>
+        }
+      </div>
+
+      <div class="filter-chip" (click)="toggleFilter($event, 'price')">
+        💰 {{ getPriceLabel() }} <span>▾</span>
+
+        @if(activeFilter === 'price') {
+          <div class="filter-dropdown price-filter" (click)="$event.stopPropagation()">
+            <div class="price-inputs">
+              <input type="number" [(ngModel)]="minPrice" placeholder="Min ($)">
+              <span>~</span>
+              <input type="number" [(ngModel)]="maxPrice" placeholder="Max ($)">
+            </div>
+            <button class="apply-btn" (click)="setPrice()">Apply</button>
+          </div>
+        }
+      </div>
+
+      <div class="filter-chip"
+           [class.active]="selectedCondition"
+           (click)="toggleFilter($event, 'condition')">
+        @if(selectedCondition === 0){
+          🌟 BNIB
+        } @else if (selectedCondition === 1){
+          💎 Like New
+        } @else if (selectedCondition === 2){
+          👍 Excellent
+        } @else if (selectedCondition === 3){
+          👌 Good
+        } @else{
+          ✨ All
+        }
+        <span class="arrow">▾</span>
+
+        @if(activeFilter === 'condition') {
+          <ul class="filter-dropdown" (click)="$event.stopPropagation()">
+            <li (click)="setCondition(-1)">All</li>
+            <li (click)="setCondition(0)">🌟 BNIB</li>
+            <li (click)="setCondition(1)">💎 Like New</li>
+            <li (click)="setCondition(2)">👍 Excellent</li>
+            <li (click)="setCondition(3)">👌 Good</li>
+          </ul>
+        }
+      </div>
+
+    </div>
+
+    <!-- Sort -->
+    <div class="sort-row">
+      <span class="sort-label">Sort by:</span>
+      <button class="sort-btn" [class.active]="currentSort === 'newest'" (click)="setSort('newest')">Newest</button>
+      <button class="sort-btn" [class.active]="currentSort === 'priceLow'" (click)="setSort('priceLow')">Lowest Price</button>
+      <button class="sort-btn" [class.active]="currentSort === 'priceHigh'" (click)="setSort('priceHigh')">Highest Price</button>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-grid" id="products-grid">
+      @for(p of products; track p._id){
+        <div class="product-card" [routerLink]="['/detailViewProduct', p._id]">
+<!--          <div class="product-img">{{p.emoji}</div>-->
+          <div class="product-body">
+            <div class="product-title">{{p.title}}</div>
+            <div class="product-meta">
+              <span>📍 {{p.location_name}}</span>
+              <span>·</span>
+              @if(p.product_condition === 0){
+                <span>🌟 BNIB</span>
+              } @else if (p.product_condition === 1){
+                <span>💎 Like New</span>
+              } @else if (p.product_condition === 2){
+                <span>👍 Excellent</span>
+              } @else if (p.product_condition === 3){
+                <span>👌 Good</span>
+              }
+            </div>
+            <div class="product-price ${p.free ? 'free' : ''}">{{p.free === true ? 'Free 🍊' : '$ ' + p.price }}</div>
+          </div>
+          <div class="product-footer">
+            <span class="time-stamp">
+              {{ getRelativeTime(p.createdAt) }}
+            </span>
+            <button
+              class="fav-btn"
+              [class.active]="p.isFavourite"
+              (click)="setFav($event, p)">
+              {{ p.isFavourite ? '❤️' : '🤍' }}
+            </button>
+          </div>
+        </div>
+      } @empty {
+        <div class="empty-products">
+          <div class="empty-illustration">
+            <div class="tangerine-wrap">
+              <span class="tangerine">🍊</span>
+              <div class="tangerine-shadow"></div>
+            </div>
+          </div>
+          <p class="empty-title">No items available</p>
+          <button class="btn-primary" (click)="goToRegister()">+ Add yours</button>
+        </div>
+      }
+    </div>
+  </div>
+</div>
