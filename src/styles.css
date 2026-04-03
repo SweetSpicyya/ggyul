@@ -173,3 +173,97 @@
   display: block;
   margin-left: 8px;
 }
+
+
+
+/* ── SweetAlert2 ── */
+.swal2-popup {
+  border-radius: 20px;
+  padding-bottom: 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border: 1px solid #EBEBEA;
+}
+
+.swal2-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1A1A18;
+}
+
+.swal2-html-container {
+  font-size: 14px;
+  color: #5C5C58;
+  line-height: 1.7;
+}
+
+.swal2-confirm {
+  font-family: 'Noto Sans KR', sans-serif !important;
+  background-color: #FF6B2B !important;
+  border-radius: 10px !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  padding: 12px 24px !important;
+  margin: 5px 15px;
+  box-shadow: none !important;
+}
+.swal2-confirm:hover {
+  background-color: #D44E18 !important;
+}
+.swal2-confirm:focus {
+  box-shadow: 0 0 0 3px rgba(255, 107, 43, 0.3) !important;
+}
+
+.swal2-cancel {
+  font-family: 'Noto Sans KR', sans-serif !important;
+  background-color: #F5F4F0 !important;
+  color: #1A1A18 !important;
+  border-radius: 10px !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  padding: 12px 24px !important;
+  margin: 5px 10px;
+  box-shadow: none !important;
+}
+.swal2-cancel:hover {
+  background-color: #EBEBEA !important;
+}
+
+.swal2-deny {
+  font-family: 'Noto Sans KR', sans-serif !important;
+  background-color: #FFF0F0 !important;
+  color: #C0392B !important;
+  border-radius: 10px !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  padding: 12px 24px !important;
+  box-shadow: none !important;
+}
+.swal2-deny:hover {
+  background-color: #FFE0E0 !important;
+}
+
+.swal2-icon.swal2-warning {
+  border-color: #FF6B2B !important;
+  color: #FF6B2B !important;
+}
+.swal2-icon.swal2-info {
+  border-color: #FF6B2B !important;
+  color: #FF6B2B !important;
+}
+.swal2-icon.swal2-success {
+  border-color: #2D7A4F !important;
+}
+.swal2-icon.swal2-success [class^='swal2-success-line'] {
+  background-color: #2D7A4F !important;
+}
+.swal2-icon.swal2-success .swal2-success-ring {
+  border-color: rgba(45, 122, 79, 0.3) !important;
+}
+
+.swal2-timer-progress-bar {
+  background: #FF6B2B !important;
+}
+
+.swal2-backdrop-show {
+  background: rgba(26, 26, 24, 0.5) !important;
+}

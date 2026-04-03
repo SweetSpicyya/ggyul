@@ -4,7 +4,6 @@ const express = require('express');
 const { MongoClient, ObjectId } = require('mongodb');
 const cors = require('cors');
 
-
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -13,14 +12,37 @@ const uri = process.env.MONGO_URI;
 const port = process.env.PORT || 3000;
 
 const client = new MongoClient(uri);
+let database;
+
+async function connectDB(){
+  try {
+    await client.connect();
+    database = client.db('ggyual_database');
+  }catch (e) {
+    console.error("fail to connect DB :", e);
+  }
+}
+connectDB().catch();
+
+app.get('/api/products', async (req, res) => {
+  try {
+    const collection = database.collection('product');
+    const products = await collection.find({}).sort({ _id: -1 }).toArray();
+
+    res.status(200).json(products);
+
+    if(!products){
+      return res.status(404).json({message: 'No product'});
+    }
+  } catch (e) {
+    console.error("fail :", e);
+    res.status(500).json({ error: e.message });
+  }
+});
 
 app.get('/api/product/:id', async (req, res) => {
   try {
     const productId = req.params.id;
-
-    await client.connect();
-
-    const database = client.db('ggyual_database');
     const collection = database.collection('product');
 
     const productData = await collection.findOne({_id: new ObjectId(productId)});
@@ -31,17 +53,13 @@ app.get('/api/product/:id', async (req, res) => {
 
    res.status(200).json(productData);
   } catch (e) {
-    console.error("fail :", error);
+    console.error("fail :", e);
     res.status(500).json({ error: e.message });
-  } finally {
-    await client.close();
   }
 });
 
 app.post('/api/registerproduct', async (req, res) => {
   try {
-    await client.connect();
-    const database = client.db('ggyual_database');
     const collection = database.collection('product');
 
     const update_pData = {
@@ -73,9 +91,6 @@ app.post('/api/registerproduct', async (req, res) => {
 app.put('/api/updateproduct/:id', async (req, res) => {
   try {
     const productId = req.params.id;
-
-    await client.connect();
-    const database = client.db('ggyual_database');
     const collection = database.collection('product');
 
     const pData = {
@@ -107,7 +122,78 @@ app.put('/api/updateproduct/:id', async (req, res) => {
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
-})
+});
+
+app.post('/api/favourites', async (req, res) => {
+  const { productId, userId } = req.body;
+  try{
+    const collection = database.collection('favourite');
+
+    const query = {
+      user_id: userId,
+      product_id: productId
+    };
+
+    const existing = await collection.findOne(query);
+
+    if(existing){
+      await collection.deleteOne({ _id: existing._id });
+      res.status(200).json({ isFavourite: false });
+    }else{
+      await collection.insertOne({
+        ...query,
+        createdAt: new Date()
+      });
+      res.status(200).json({ isFavourite: true });
+    }
+  }catch (e){
+    res.status(500).json({ message: e.message });
+  }
+});
+
+app.get('/api/favorites/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    const collection = database.collection('favourite');
+    const favIds = await collection.distinct("product_id", { user_id: userId });
+
+    res.status(200).json(favIds);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+app.get('/api/filter/products', async (req, res) => {
+  try {
+    const { city, maxPrice, minPrice, condition } = req.query;
+    let query = {};
+
+    if (city) {
+      query.location_name = { $regex: city, $options: 'i' };
+    }
+
+    if (maxPrice || minPrice) {
+      query.price = { $lte: parseInt(maxPrice), $options: 'i' };
+    }
+
+    if (condition) {
+      query.product_condition = { $regex: condition, $options: 'i' };
+    }
+
+    console.log(query)
+
+    const collection = database.collection('product');
+    const products = await collection.find(query).sort({ _id: -1 }).toArray();
+
+    console.log(products)
+
+    res.status(200).json(products);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 
 app.post('/api/user/register',async(req,res)=>{
   try{
@@ -127,9 +213,15 @@ app.post('/api/user/register',async(req,res)=>{
   }
 })
 
-// 4. 서버 실행
+
 app.listen(port, () => {
   console.log(`✅ It's on http://localhost:${port}.`);
 });
+
+process.on('SIGINT', async () => {
+  await client.close();
+  console.log('Close MongoDB');
+  process.exit(0);
+})
 
 

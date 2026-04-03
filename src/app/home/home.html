@@ -1,1 +1,95 @@
-<p>home works!</p>
+<div class="page" id="page-home">
+  <div class="container">
+    <!-- Search -->
+    <div class="search-bar">
+      <span>🔍</span>
+      <input type="text" placeholder="어떤 물건을 찾고 있나요?">
+      <button class="btn-primary btn-sm">검색</button>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-row">
+      <div class="filter-chip"
+           [class.active]="selectedCity"
+           (click)="toggleFilter($event, 'location')">
+        📍 {{ selectedCity !== '' ? selectedCity : 'Location' }} <span class="arrow">▾</span>
+
+        @if(activeFilter === 'location') {
+          <ul class="filter-dropdown" (click)="$event.stopPropagation()">
+            <li (click)="setCity('')">All</li>
+            <li (click)="setCity('Richmond')">Richmond</li>
+            <li (click)="setCity('Vancouver')">Vancouver</li>
+            <li (click)="setCity('Burnaby')">Burnaby</li>
+            <li (click)="setCity('Coquitlam')">Coquitlam</li>
+          </ul>
+        }
+      </div>
+
+
+      <div class="filter-chip" [class.active]="selectedPrice" (click)="toggleFilter($event, 'price')">
+        💰 {{ selectedPrice ? '$ ' + selectedPrice : 'Price' }} <span>▾</span>
+      </div>
+
+      <div class="filter-chip"
+           [class.active]="selectedCondition"
+           (click)="toggleFilter($event, 'condition')">
+        ✨ {{ selectedCondition || 'Condition' }} <span class="arrow">▾</span>
+
+        @if(activeFilter === 'condition') {
+          <ul class="filter-dropdown" (click)="$event.stopPropagation()">
+            <li (click)="setCity('Condition')">All</li>
+            <li (click)="setCity('Richmond')">🌟 BNIB</li>
+            <li (click)="setCity('Vancouver')">💎 Like New</li>
+            <li (click)="setCity('Burnaby')">👍 Excellent</li>
+            <li (click)="setCity('Burnaby')">👌 Good</li>
+          </ul>
+        }
+      </div>
+
+    </div>
+
+    <!-- Sort -->
+    <div class="sort-row">
+      <span class="sort-label">정렬:</span>
+      <button class="sort-btn active" onclick="setSort(this)">최신순</button>
+      <button class="sort-btn" onclick="setSort(this)">가격 낮은순</button>
+      <button class="sort-btn" onclick="setSort(this)">가격 높은순</button>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-grid" id="products-grid">
+      @for(p of products; track p._id){
+        <div class="product-card" [routerLink]="['/detailViewProduct', p._id]">
+<!--          <div class="product-img">{{p.emoji}</div>-->
+          <div class="product-body">
+            <div class="product-title">{{p.title}}</div>
+            <div class="product-meta">
+              <span>📍 {{p.location_name}}</span>
+              <span>·</span>
+              @if(p.product_condition === 0){
+                <span>🌟 BNIB</span>
+              } @else if (p.product_condition === 1){
+                <span>💎 Like New</span>
+              } @else if (p.product_condition === 2){
+                <span>👍 Excellent</span>
+              } @else if (p.product_condition === 3){
+                <span>👌 Good</span>
+              }
+            </div>
+            <div class="product-price ${p.free ? 'free' : ''}">{{p.free === true ? 'Free 🍊' : '$ ' + p.price }}</div>
+          </div>
+          <div class="product-footer">
+            <button
+              class="fav-btn"
+              [class.active]="p.isFavourite"
+              (click)="setFav($event, p)">
+              {{ p.isFavourite ? '❤️' : '🤍' }}
+            </button>
+          </div>
+        </div>
+      } @empty {
+        <span>There is no products!</span>
+      }
+    </div>
+  </div>
+</div>
