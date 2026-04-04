@@ -9,6 +9,7 @@ import { AllUser } from './all-user/all-user';
 import { LoginUser } from './login-user/login-user';
 import { RegisterUser } from './register-user/register-user';
 import { ProfileUser } from './profile-user/profile-user';
+import { ProfileUserUpdate } from './profile-user-update/profile-user-update';
 import { MessageUser } from './message-user/message-user';
 import { Header } from './header/header';
 
@@ -29,7 +30,7 @@ export const routes: Routes = [
       {path: 'loginUser', component:LoginUser},
       {path: 'registerUser', component:RegisterUser},
       {path: 'profileUser', component:ProfileUser},
-      {path: 'profileUser/:userId', component:ProfileUser},
+      {path: 'editProfileUser/:userId', component:ProfileUserUpdate},
       {path: 'messageUser', component:MessageUser}
     ]
   }

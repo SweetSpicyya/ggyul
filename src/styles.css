@@ -1,4 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
 :root {
     --gyul: #FF6B2B;
     --gyul-light: #FF8C55;
@@ -164,3 +165,11 @@
     font-size: 18px; font-weight: 700; margin-bottom: 16px;
     font-family: var(--font-display);
   }
+
+/* ── ERROR ── */
+.custom-error{
+  color: #ff4d4f !important;
+  font-size: 13px;
+  display: block;
+  margin-left: 8px;
+}
