@@ -173,6 +173,36 @@ app.post('/api/user/login',async(req,res)=>{
     // await client.close();
   }
 });
+app.put('/api/user/updateProfile',async(req,res)=>{
+  try{
+    await client.connect();
+    const database = client.db('ggyual_database');
+    const collection = database.collection('user');
+
+    const { _id, email, first_name, last_name, birth_date, password } = req.body;
+    
+    const result = await collection.updateOne({_id:new ObjectId(_id)},
+    {
+      $set : {
+        email,
+        first_name,
+        last_name,
+        birth_date,
+        password
+      }
+    });
+    if(result.matchedCount == 0){
+      return res.status(404).json({success:false, message:"user not found"});
+    }
+    res.status(201).json({success:true, message:"profileUpdate",data : result});
+    console.log("login success : ", result);
+  } catch(error){
+    console.log('update error', error);
+    res.status(500).json({success:false, message:error.message});
+  } finally{
+
+  }
+})
 
 // 4. 서버 실행
 app.listen(port, () => {

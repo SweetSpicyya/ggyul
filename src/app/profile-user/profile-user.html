@@ -1,1 +1,20 @@
-<p>profile-user works!</p>
+<div class="page" id="page-profile">
+  <div class="container" style="max-width:600px;">
+    <div class="profile-card">
+      <div class="profile-avatar">🍊</div>
+      <div class="profile-name">{{loginUser.first_name}} {{loginUser.last_name}}</div>
+      <div class="profile-email">{{loginUser.email}}</div>
+      <div class="profile-props">
+        <div class="prop-row"><span class="prop-key">First Name</span><span class="prop-val">{{loginUser.first_name}}</span></div>
+        <div class="prop-row"><span class="prop-key">Last Name</span><span class="prop-val">{{loginUser.last_name}}</span></div>
+        <div class="prop-row"><span class="prop-key">Email</span><span class="prop-val">{{loginUser.email}}</span></div>
+        <div class="prop-row"><span class="prop-key">Birth Date</span><span class="prop-val">{{loginUser.birth_date | date:'MMMM d, yyyy':'UTC' }}</span></div>
+        <div class="prop-row"><span class="prop-key">Admin</span><span class="prop-val"><span class="badge badge-admin">{{loginUser.admin}}</span></span></div>
+      </div>
+      <div style="margin-top:24px;">
+        <button class="btn-primary" [routerLink]="['/editProfileUser',loginUser._id]">Update Profile</button>
+        <button class="btn-danger" style="margin-left:10px;" onclick="showToast('계정이 삭제되었습니다')">Delete Account</button>
+      </div>
+    </div>
+  </div>
+</div>
