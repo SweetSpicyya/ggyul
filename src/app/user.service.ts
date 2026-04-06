@@ -34,4 +34,7 @@ export class UserService {
   loginProcess(email:string, password:string):Observable<LoginResponse>{
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, {email:email, password:password});
   }
+  updateProfile(userData:User):Observable<any>{
+    return this.http.put(`${this.apiUrl}/updateProfile`, userData);
+  }
 }
