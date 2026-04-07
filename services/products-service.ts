@@ -38,10 +38,30 @@ export class ProductsService {
     return this.http.get<any[]>(`${this.apiUrl}/api/favorites/${userId}`);
   }
 
+  getMyFavList(userId: string): Observable<any>{
+    return this.http.get<any[]>(`${this.apiUrl}/api/favorites/products/${userId}`);
+  }
+
+  removeFavourite(productId: string): Observable<any>{
+    const userId = localStorage.getItem('user_id');
+    return this.http.post<any[]>(`${this.apiUrl}/api/remove/favorites/products`, {
+      productId,
+      userId
+    });
+  }
+
   getFilteredProducts(params: any): Observable<any>{
     return this.http.get<any[]>(`${this.apiUrl}/api/filter/products`,{
       params
     })
+  }
+
+  getMyProducts(userId: string): Observable<any>{
+    return this.http.get<any[]>(`${this.apiUrl}/api/myproducts/${userId}`);
+  }
+
+  deleteProduct(productId: string): Observable<any>{
+    return this.http.delete(`${this.apiUrl}/api/delete/product/${productId}`);
   }
 
 }
