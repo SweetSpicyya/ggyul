@@ -10,8 +10,12 @@
       <a class="nav-link active" href="#" onclick="showPage('home')">🏠 Home</a>
       <a class="nav-link" href="#" onclick="showPage('my-items')">📦 내 물건</a>
       <a class="nav-link" href="#" onclick="showPage('favourites')">❤️ Favourite</a>
-      <a class="nav-link" href="#" onclick="showPage('profile')">👤 Profile</a>
-      <a class="nav-link admin-link" href="#" id="all-users-link" onclick="showPage('all-users')">🛡 All User</a>
+      @if(loginYn){
+        <a class="nav-link" href="#" [routerLink]="['/profileUser']">👤 Profile</a>
+      }
+      @if(loginYn && loginUser.admin == 'ADMIN'){
+        <a class="nav-link admin-link" href="#" id="all-users-link" [routerLink]="['/allUser']">🛡 All User</a>
+      }
       @if(loginYn){
         <button class="nav-btn-logout" (click)="doLogout()">Logout</button>
       } @else {

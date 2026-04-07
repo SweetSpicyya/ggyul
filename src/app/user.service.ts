@@ -37,4 +37,13 @@ export class UserService {
   updateProfile(userData:User):Observable<any>{
     return this.http.put(`${this.apiUrl}/updateProfile`, userData);
   }
+  getAllUserData(params?: any):Observable<any>{
+    return this.http.get<any>(`${this.apiUrl}/allUser`, {params:params});
+  }
+  updateAdmin(_id:string, admin:string):Observable<any>{
+    return this.http.put(`${this.apiUrl}/updateAdmin`, {_id : _id , admin : admin});
+  }
+  deleteUserData(_id:string):Observable<any>{
+    return this.http.delete(`${this.apiUrl}/userDelete`, {params:{_id : _id}});
+  }
 }
