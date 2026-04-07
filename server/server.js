@@ -295,7 +295,131 @@ app.put('/api/user/updateProfile',async(req,res)=>{
   }
 })
 
+app.get('/api/user/allUser',async(req,res)=>{
+  try{
+    await client.connect();
+    const database = client.db('ggyual_database');
+    const collection = database.collection('user');
 
+    const {admin,ageRange, itemCount, sortBy, order} = req.query;
+    const pipeline = [
+      {
+        $addFields:{
+          stringId : {$toString:'$_id'}
+        }
+      },
+      {
+        $lookup : {
+          from : 'product',
+          localField:'stringId',
+          foreignField:'user_id',
+          as:'userProducts'
+        }
+      },
+      {
+        $addFields:{
+          itemCounter:{$size:'$userProducts'}
+        }
+      },
+      {
+        $project:{userProducts:0}
+      }
+    ];
+    if (admin && admin !== '') {
+      pipeline.push({ $match: { admin: admin } });
+    }
+    if (ageRange && ageRange !== '') {
+      const currentYear = new Date().getFullYear();
+      const targetAge = parseInt(ageRange);
+
+      const minYear = currentYear - targetAge - 9; 
+      const maxYear = currentYear - targetAge;
+
+      pipeline.push({
+        $match: {
+          birth_date: {
+            $gte: new Date(`${minYear}-01-01`),
+            $lte: new Date(`${maxYear}-12-31`)
+          }
+        }
+      });
+    }
+    if (itemCount && itemCount !== '') {
+      const count = parseInt(itemCount);
+      
+      if (count === 40) {
+        pipeline.push({ $match: { itemCounter: { $gte: 40 } } });
+      } else {
+        pipeline.push({ 
+          $match: { 
+            itemCounter: { $gt: count - 10, $lte: count } 
+          } 
+        });
+      }
+    }
+
+    if (sortBy) {
+      const sortStage = {};
+      sortStage[sortBy] = order === 'desc' ? -1 : 1;
+      pipeline.push({ $sort: sortStage });
+    }
+    
+    const result = await collection.aggregate(pipeline).toArray();
+    console.log("successfully selected : ", result);
+    res.status(200).json({ message: "selected all user data !", result : result});
+  } catch (error){
+    console.log('register error : ', error);
+    res.status(500).json({message:"fail to selected", error:error.message})
+  } finally{
+    // await client.close();
+  }
+});
+app.put('/api/user/updateAdmin',async(req,res)=>{
+  try{
+    await client.connect();
+    const database = client.db('ggyual_database');
+    const collection = database.collection('user');
+
+    const { _id, admin } = req.body;
+    
+    const result = await collection.updateOne({_id:new ObjectId(_id)},
+    {
+      $set : {
+        admin
+      }
+    });
+    if(result.matchedCount == 0){
+      return res.status(404).json({success:false, message:"user not found"});
+    }
+    res.status(201).json({success:true, message:"admin Update",data : result});
+    console.log("admin update success : ", result);
+  } catch(error){
+    console.log('admin update error', error);
+    res.status(500).json({success:false, message:error.message});
+  } finally{
+
+  }
+});
+app.delete('/api/user/userDelete',async(req,res)=>{
+  try{
+    await client.connect();
+    const database = client.db('ggyual_database');
+    const collection = database.collection('user');
+    const {_id} = req.query;
+    const result = await collection.deleteOne({_id: new ObjectId(_id)})
+    if (result.deletedCount === 1) {
+      res.status(200).json({ success: true, message: 'successfully deleted' });
+    } else {
+      res.status(404).json({ success: false, message: 'User not found' });
+    }
+  } catch(error){
+    console.log('delete user error ', error);
+    res.status(500).json({success:false, message : error.message});
+  }
+  finally{
+
+  }
+})
 app.listen(port, () => {
   console.log(`✅ It's on http://localhost:${port}.`);
 });
