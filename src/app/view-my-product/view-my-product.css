@@ -1,0 +1,10 @@
+.my-items-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 24px;
+}
+
+.btn-ghost.btn-sm{
+  background-color: rgba(196, 196, 190, 0.5);
+}
+
+
