@@ -3,7 +3,7 @@
     <a class="logo" href="#" onclick="showPage('home')">
       <span>🍊</span> GGYUL Market
     </a>
-    @if(loginYn){
+    @if(loginYn && loginUser){
       <span class="header-greeting">Welcome, <strong id="greet-name">{{loginUser.first_name}}</strong></span>
     }
     <nav class="header-nav">

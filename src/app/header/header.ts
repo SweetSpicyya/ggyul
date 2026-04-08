@@ -16,31 +16,35 @@ export class Header {
     private userService : UserService
   ){}
   ngOnInit(){
-    
-    this.userService.isLoggedIn$.subscribe(status=>{
-      this.loginYn = status;
-      if(status){
-        this.getLoginData();
+    this.userService.currentUser$.subscribe({
+      next:(user)=>{
+        this.loginUser = user;
+        this.loginYn = !!user; // if it has data = true, 
+        console.log('login success : ' + user);
+      },
+      error:(err)=>{
+        console.log('error get login data : ' + err);
       }
     })
   }
 
-  getLoginData(){
-    const loginData = localStorage.getItem('loginUserData');
+  // getLoginData(){
+  //   const loginData = localStorage.getItem('loginUserData');
     
-    if(loginData){
-     this.loginUser = JSON.parse(loginData);
-      console.log(`loginUser : ${this.loginUser._id}, ${this.loginUser.email}, ${this.loginUser.first_name}`); 
-      // this.loginYn = true;
-    } else { 
-      // this.loginYn = false;
-      this.loginUser = null;
-    }
-  }
+  //   if(loginData){
+  //    this.loginUser = JSON.parse(loginData);
+  //     console.log(`loginUser : ${this.loginUser._id}, ${this.loginUser.email}, ${this.loginUser.first_name}`); 
+  //     // this.loginYn = true;
+  //   } else { 
+  //     // this.loginYn = false;
+  //     this.loginUser = null;
+  //   }
+  // }
   doLogout(){
-    this.loginUser = null;
-    this.loginYn = false;
-    localStorage.removeItem('loginUserData');
+    this.userService.logout();
+    // this.loginUser = null;
+    // this.loginYn = false;
+    // localStorage.removeItem('loginUserData');
     alert('“You have been logged out.”');
     this.router.navigate(['/home']);
   }
