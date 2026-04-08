@@ -48,7 +48,7 @@ export class LoginUser {
         localStorage.setItem('loginUserData', JSON.stringify(loginUserData));
         console.log("loginUserData : " + JSON.stringify(loginUserData));
         alert(`welcome ${res.loginData?.first_name}`);
-        this.userService.updateLoginStatus(true);
+        this.userService.setLoginUser(res.loginData);
         this.router.navigate(['home']);
       },
       error:(err)=>{

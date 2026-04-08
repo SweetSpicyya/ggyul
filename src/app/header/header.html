@@ -3,7 +3,7 @@
     <a class="logo" href="#" [routerLink]="['/home']">
       <span>🍊</span> GGYUL
     </a>
-    @if(loginYn){
+    @if(loginYn && loginUser){
       <span class="header-greeting">Welcome, <strong id="greet-name">{{loginUser.first_name}}</strong></span>
     }
     <nav class="header-nav">

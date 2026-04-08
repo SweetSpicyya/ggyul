@@ -44,18 +44,50 @@
 
         <!-- Messages -->
         <div class="messages-panel">
-          <h3>💬 문의 메시지</h3>
-          <!-- Non-owner: send message -->
-          <div id="msg-send-area">
-            <div class="message-input-row">
-              <input type="text" class="input-field" placeholder="판매자에게 문의하기..." id="msg-input">
-              <button class="btn-primary btn-sm" onclick="sendMessage()">전송</button>
+          <h3>💬 Inquiry Message</h3>
+          <!-- Owner -->
+           @if(productOwner){
+              <div class="message-list" id="message-list">
+                <div class="message-item" *ngFor="let message of ownerMessageData">
+                  <div class="message-header">
+                    <span class="message-sender">{{message.senderFirstName}} {{message.senderLasttName}} · {{message.senderEmail}}</span>
+                    <span class="message-time">{{message.creation_time | date:'MMMM d, yyyy':'UTC' }}</span>
+                  </div>
+                  <div class="message-content">{{message.content}}</div>
+                </div>
+              </div>
+              <div id="msg-owner-note" style="display: block; font-size:13px; color:var(--text3); text-align:center; padding:8px;">
+                Inquiry Message for me.
+              </div>
+           } @else {
+            <!-- Non-owner: send message -->
+            <div id="msg-send-area">
+              <div class="message-input-row">
+                <input type="text" class="input-field" placeholder="Send the message to seller..." id="msg-input" [(ngModel)]="messageContent" >
+                <button class="btn-primary btn-sm" (click)="sendMessage()">Send</button>
+              </div>
             </div>
-          </div>
-          <!-- Owner sees note instead -->
-          <div id="msg-owner-note" style="display:none; font-size:13px; color:var(--text3); text-align:center; padding:8px;">
-            내 물건에 온 문의 메시지입니다.
-          </div>
+            <div class="message-list" id="message-list" style="margin-top: 10px;">
+              <div class="message-item" *ngFor="let message of messageData">
+                <div class="message-header">
+                  <span class="message-sender">{{message.senderFirstName}} {{message.senderLasttName}} · {{message.senderEmail}}</span>
+                  <span class="message-time">{{message.creation_time | date:'MMMM d, yyyy':'UTC'  }}</span>
+                </div>
+                <div class="message-content">{{message.content}}</div>
+              </div>
+              <!-- <div class="message-item">
+                <div class="message-header">
+                  <span class="message-sender">이서연 · seoyeon@email.com</span>
+                  <span class="message-time">2025.03.15 16:07</span>
+                </div>
+                <div class="message-content">배터리 상태가 어떻게 되나요? 혹시 케이스도 포함인가요?</div>
+              </div> -->
+            </div>
+            <!-- Owner sees note instead -->
+            
+          }
+           
+          
         </div>
       </div>
 
@@ -70,7 +102,7 @@
             </div>
           </div>
           <div style="display:flex;flex-direction:column;gap:10px;">
-            <button class="btn-primary" style="width:100%;">Send a Message</button>
+            <!-- <button class="btn-primary" style="width:100%;">Send a Message</button> -->
             @if(userId == product?.user_id){
               <button class="btn-secondary" style="width:100%;" id="view-edit-btn" [routerLink]="['/editMyProduct', product._id]">✏️ Edit</button>
             }
