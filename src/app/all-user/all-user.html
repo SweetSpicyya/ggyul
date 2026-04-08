@@ -1,1 +1,115 @@
-<p>all-user works!</p>
+<div class="page" id="page-all-users">
+  <div class="container">
+    <div class="page-header">
+      <div class="section-title">🛡 Managing All User</div>
+      <div style="display:flex;gap:10px;">
+        <div class="stat-pill"><span class="stat-num">24</span> All Users</div>
+        <div class="stat-pill"><span class="stat-num">3</span> Admin</div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-row" style="margin-bottom:16px; display: flex; gap: 8px;">
+      <div class="filter-wrapper" style="position: relative;">
+        <div class="filter-chip" (click)="toggleFilter('admin')">
+          🛡 {{ filterParams.admin ? filterParams.admin : 'Admin' }} ▾
+        </div>
+        
+        @if (activeFilter === 'admin') {
+          <div class="dropdown-menu">
+            <div class="dropdown-item" (click)="setFilter('admin','')">All</div>
+            <div class="dropdown-item" (click)="setFilter('admin','ADMIN')">Admin</div>
+            <div class="dropdown-item" (click)="setFilter('admin','USER')">User</div>
+          </div>
+        }
+      </div>
+
+      <div class="filter-wrapper" style="position: relative;">
+        <div class="filter-chip" (click)="toggleFilter('age')">
+          🎂 {{ filterParams.ageRange ? filterParams.ageRange : 'Ages' }} ▾
+        </div>
+        
+        @if (activeFilter === 'age') {
+          <div class="dropdown-menu">
+            <div class="dropdown-item" (click)="setFilter('ageRange','')">All</div>
+            <div class="dropdown-item" (click)="setFilter('ageRange','20')">20's</div>
+            <div class="dropdown-item" (click)="setFilter('ageRange','30')">30's</div>
+            <div class="dropdown-item" (click)="setFilter('ageRange','40')">Over 40's</div>
+          </div>
+        }
+      </div>
+      <div class="filter-wrapper" style="position: relative;">
+        <div class="filter-chip" (click)="toggleFilter('counter')">
+          🍊 {{filterParams.itemCount ? filterParams.itemCount : 'Item Counter'}} ▾
+        </div>
+        
+        @if (activeFilter === 'counter') {
+          <div class="dropdown-menu">
+            <div class="dropdown-item" (click)="setFilter('itemCount','')">All</div>
+            <div class="dropdown-item" (click)="setFilter('itemCount','10')">1~10</div>
+            <div class="dropdown-item" (click)="setFilter('itemCount','20')">11~20</div>
+            <div class="dropdown-item" (click)="setFilter('itemCount','30')">21~30</div>
+            <div class="dropdown-item" (click)="setFilter('itemCount','40')">Over 40</div>
+          </div>
+        }
+
+      </div>
+    </div>
+    <div class="sort-row" style="margin-bottom:16px;">
+      <span class="sort-label">Sort:</span>
+      <button class="sort-btn" [class.active]="filterParams.sortBy === 'first_name'" (click)="setSort('first_name')">First name</button>
+      <button class="sort-btn" [class.active]="filterParams.sortBy === 'last_name'" (click)="setSort('last_name')">Last name</button>
+      <button class="sort-btn" [class.active]="filterParams.sortBy === 'itemCounter'" (click)="setSort('itemCounter')">Items Counter</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Birth Date</th>
+            <th>Item Count</th>
+            <th>Admin</th>
+            <th>Manage</th>
+          </tr>
+        </thead>
+        @if (getAllUserData && getAllUserData.length > 0) {
+          <tbody>
+            <tr *ngFor="let user of getAllUserData">
+              <td><strong>{{user.first_name}} {{user.last_name}}</strong></td>
+              <td style="color:var(--text2);">{{user.email}}</td>
+              <td style="color:var(--text2);">{{user.birth_date | date:'yyyy-MM-dd':'UTC'}}</td>
+              <td><span class="badge badge-orange"
+                        [ngClass]="{ 'badge-orange': user.itemCounter === 0, 
+                                    'badge-gray': user.admin != 0 }">
+                {{user.itemCounter}}
+              </span></td>
+              <td><span class="badge" 
+                      [ngClass]="{ 'badge-admin': user.admin === 'ADMIN', 
+                                    'badge-gray': user.admin === 'USER' }">
+                                    {{user.admin}}
+              </span></td>
+              <td class="td-actions">
+                <!-- <button class="btn-ghost btn-sm" (click)="showPage('profile')">Profile</button> -->
+                @if(user.admin == 'ADMIN'){
+                  <button class="btn-danger btn-sm" (click)="manageAdmin(user)">Delete Admin</button>
+                } @else{
+                  <button class="btn-ghost btn-sm" (click)="manageAdmin(user)">Grant Admin</button>
+                }
+                <button class="btn-danger btn-sm" (click)="deleteAccount(user._id)">Delete Account</button>
+              </td>
+            </tr>
+          </tbody>
+        } @else{
+          <tbody>
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 20px;">
+                loading... 🍊
+              </td>
+            </tr>
+          </tbody>
+        }
+        
+      </table>
+    </div>
+</div>

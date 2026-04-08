@@ -11,8 +11,10 @@
       <a class="nav-link" routerLinkActive="active" (click)="gotoRequiredPage('/viewMyProduct')">📦 My Products</a>
       <a class="nav-link" routerLinkActive="active" (click)="gotoRequiredPage('/myFavourites')">❤️ Favourite</a>
       <a class="nav-link" routerLinkActive="active" (click)="gotoRequiredPage('/profileUser')">👤 Profile</a>
-      <a class="nav-link admin-link" id="all-users-link" routerLinkActive="active" [routerLink]="['/allUser']">🛡 All User</a>
-
+      @if(loginYn && loginUser.admin == 'ADMIN'){
+        <a class="nav-link admin-link" href="#" id="all-users-link" [routerLink]="['/allUser']">🛡 All User</a>
+      }
+      
       @if(loginYn){
         <button class="nav-btn-logout" (click)="doLogout()">Logout</button>
       } @else {

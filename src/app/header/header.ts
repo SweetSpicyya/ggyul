@@ -45,6 +45,7 @@ export class Header {
     this.loginYn = false;
     localStorage.removeItem('loginUserData');
     alert('“You have been logged out.”');
+    this.router.navigate(['/home']);
   }
 
   gotoRequiredPage(path: string){

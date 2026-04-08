@@ -1,0 +1,62 @@
+.page-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;
+}
+.stat-pill {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 18px;
+  font-size: 13px; color: var(--text2); display: flex; gap: 8px; align-items: center;
+}
+.stat-num { font-weight: 700; color: var(--text); font-size: 18px; }
+.filters-row {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;
+  }
+  .filter-chip {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 8px 14px;
+    font-size: 13px; color: var(--text2); cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-chip:hover, .filter-chip.open { border-color: var(--gyul); color: var(--gyul); }
+
+  .sort-row {
+    display: flex; gap: 8px; margin-bottom: 16px; align-items: center;
+  }
+  .sort-label { font-size: 12px; color: var(--text3); }
+  .sort-btn {
+    font-size: 12px; padding: 5px 12px; border-radius: 20px;
+    background: var(--surface2); color: var(--text2); border: none; cursor: pointer;
+    font-family: var(--font-body); transition: all 0.15s;
+  }
+  .sort-btn.active { background: var(--gyul); color: #fff; }
+
+  .filter-chip {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* 드롭다운 메뉴 스타일 */
+.dropdown-menu {
+  position: absolute;
+  top: 110%; /* 칩 바로 아래 */
+  left: 0;
+  z-index: 100;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  min-width: 120px;
+  padding: 4px 0;
+}
+
+.dropdown-item {
+  padding: 10px 16px; 
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #f5f5f5;
+  color: #ff6b35;
+}
