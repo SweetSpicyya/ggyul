@@ -1,21 +1,22 @@
 <header class="header" id="main-header">
   <div class="header-inner">
-    <a class="logo" href="#" onclick="showPage('home')">
-      <span>🍊</span> GGYUL Market
+    <a class="logo" href="#" [routerLink]="['/home']">
+      <span>🍊</span> GGYUL
     </a>
     @if(loginYn){
       <span class="header-greeting">Welcome, <strong id="greet-name">{{loginUser.first_name}}</strong></span>
     }
     <nav class="header-nav">
-      <a class="nav-link active" href="#" onclick="showPage('home')">🏠 Home</a>
-      <a class="nav-link" href="#" onclick="showPage('my-items')">📦 내 물건</a>
-      <a class="nav-link" href="#" onclick="showPage('favourites')">❤️ Favourite</a>
-      <a class="nav-link" href="#" onclick="showPage('profile')">👤 Profile</a>
-      <a class="nav-link admin-link" href="#" id="all-users-link" onclick="showPage('all-users')">🛡 All User</a>
+      <a class="nav-link" routerLinkActive="active" [routerLink]="['/home']">🏠 Home</a>
+      <a class="nav-link" routerLinkActive="active" (click)="gotoRequiredPage('/viewMyProduct')">📦 My Products</a>
+      <a class="nav-link" routerLinkActive="active" (click)="gotoRequiredPage('/myFavourites')">❤️ Favourite</a>
+      <a class="nav-link" routerLinkActive="active" (click)="gotoRequiredPage('/profileUser')">👤 Profile</a>
+      <a class="nav-link admin-link" id="all-users-link" routerLinkActive="active" [routerLink]="['/allUser']">🛡 All User</a>
+
       @if(loginYn){
         <button class="nav-btn-logout" (click)="doLogout()">Logout</button>
       } @else {
-        <button class="nav-btn-logout"[routerLink]="['/loginUser']" >Login</button>
+        <button class="nav-btn-logout" [routerLink]="['/loginUser']" >Login</button>
       }
     </nav>
   </div>

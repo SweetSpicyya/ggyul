@@ -3,36 +3,68 @@
     <!-- Search -->
     <div class="search-bar">
       <span>🔍</span>
-      <input type="text" placeholder="어떤 물건을 찾고 있나요?">
-      <button class="btn-primary btn-sm">검색</button>
+      <input
+        type="text"
+        [(ngModel)]="searchKeyword"
+        (keyup.enter)="onSearch()"
+        placeholder="Search items in Vancouver..."
+        class="search-input"
+      >
+      <button class="btn-primary btn-sm" (click)="onSearch()">Search</button>
     </div>
 
     <!-- Filters -->
-    <div class="filters-row">
-      <div class="filter-chip"
+    <div class="dropdown-row">
+      <div class="dropdown-chip"
+           [class.active]="selectedCity"
+           (click)="toggleFilter($event, 'city')">
+        🏙️ {{ selectedCity !== '' ? selectedCity : 'City' }} <span class="arrow">▾</span>
+
+        @if(activeFilter === 'city') {
+          <ul class="gul-dropdown" (click)="$event.stopPropagation()">
+            <li (click)="setCity('')">All</li>
+            <li (click)="setCity('vancouver')">Vancouver</li>
+            <li (click)="setCity('seoul')">Seoul</li>
+          </ul>
+        }
+      </div>
+
+      <div class="dropdown-chip"
            [class.active]="selectedLocation"
            (click)="toggleFilter($event, 'location')">
         📍 {{ selectedLocation !== '' ? selectedLocation : 'Location' }} <span class="arrow">▾</span>
 
         @if(activeFilter === 'location') {
-          <ul class="filter-dropdown" (click)="$event.stopPropagation()">
-            <li (click)="setCity('')">All</li>
-            <li (click)="setCity('Burnaby')">Burnaby</li>
-            <li (click)="setCity('Coquitlam')">Coquitlam</li>
-            <li (click)="setCity('Downtown')">Downtown</li>
-            <li (click)="setCity('Richmond')">Richmond</li>
+          <ul class="gul-dropdown" (click)="$event.stopPropagation()">
+            @if(this.selectedCity === 'vancouver'){
+              <li (click)="setLocation('')">All</li>
+              <li (click)="setLocation('burnaby')">Burnaby</li>
+              <li (click)="setLocation('coquitlam')">Coquitlam</li>
+              <li (click)="setLocation('downtown')">Downtown</li>
+              <li (click)="setLocation('richmond')">Richmond</li>
+            }
+            @else if (this.selectedCity === 'seoul'){
+              <li (click)="setLocation('')">All</li>
+              <li (click)="setLocation('은평구')">은평구</li>
+              <li (click)="setLocation('종로구')">종로구</li>
+              <li (click)="setLocation('강남구')">강남구</li>
+              <li (click)="setLocation('송파구')">송파구</li>
+            }
+            @else {
+              <li style="color: #999; padding: 10px; text-transform: none;">Select a city first</li>
+            }
           </ul>
         }
       </div>
 
-      <div class="filter-chip" (click)="toggleFilter($event, 'price')">
+      <div class="dropdown-chip" (click)="toggleFilter($event, 'price')">
         💰 {{ getPriceLabel() }} <span>▾</span>
 
         @if(activeFilter === 'price') {
-          <div class="filter-dropdown price-filter" (click)="$event.stopPropagation()">
+          <div class="gul-dropdown price-filter" (click)="$event.stopPropagation()">
             <div class="price-inputs">
               <input type="number" [(ngModel)]="minPrice" placeholder="Min ($)">
-              <span>~</span>
+              <span>-</span>
               <input type="number" [(ngModel)]="maxPrice" placeholder="Max ($)">
             </div>
             <button class="apply-btn" (click)="setPrice()">Apply</button>
@@ -40,24 +72,14 @@
         }
       </div>
 
-      <div class="filter-chip"
+      <div class="dropdown-chip"
            [class.active]="selectedCondition"
            (click)="toggleFilter($event, 'condition')">
-        @if(selectedCondition === 0){
-          🌟 BNIB
-        } @else if (selectedCondition === 1){
-          💎 Like New
-        } @else if (selectedCondition === 2){
-          👍 Excellent
-        } @else if (selectedCondition === 3){
-          👌 Good
-        } @else{
-          ✨ All
-        }
+          {{ selectedCondition == -1 ? '✨ Condition' : conditionLabel[selectedCondition] }}
         <span class="arrow">▾</span>
 
         @if(activeFilter === 'condition') {
-          <ul class="filter-dropdown" (click)="$event.stopPropagation()">
+          <ul class="gul-dropdown" (click)="$event.stopPropagation()">
             <li (click)="setCondition(-1)">All</li>
             <li (click)="setCondition(0)">🌟 BNIB</li>
             <li (click)="setCondition(1)">💎 Like New</li>
@@ -67,7 +89,13 @@
         }
       </div>
 
+      <div class="filter-actions">
+        <button class="reset-btn" (click)="resetFilters()">
+          <span class="icon">🔄</span> Reset All
+        </button>
+      </div>
     </div>
+
 
     <!-- Sort -->
     <div class="sort-row">
@@ -77,27 +105,29 @@
       <button class="sort-btn" [class.active]="currentSort === 'priceHigh'" (click)="setSort('priceHigh')">Highest Price</button>
     </div>
 
+    <div class="info-section">
+      <div class="section-title-items">
+        {{ products?.length || 0 }} items
+      </div>
+      <div class="button-wrap">
+        <button class="btn-primary btn-add-p" (click)="goToRegister()">
+          + Add yours
+        </button>
+      </div>
+    </div>
+
     <!-- Products Grid -->
     <div class="products-grid" id="products-grid">
       @for(p of products; track p._id){
         <div class="product-card" [routerLink]="['/detailViewProduct', p._id]">
-<!--          <div class="product-img">{{p.emoji}</div>-->
           <div class="product-body">
             <div class="product-title">{{p.title}}</div>
             <div class="product-meta">
               <span>📍 {{p.location_name}}</span>
               <span>·</span>
-              @if(p.product_condition === 0){
-                <span>🌟 BNIB</span>
-              } @else if (p.product_condition === 1){
-                <span>💎 Like New</span>
-              } @else if (p.product_condition === 2){
-                <span>👍 Excellent</span>
-              } @else if (p.product_condition === 3){
-                <span>👌 Good</span>
-              }
+              <span> {{ conditionLabel[p.product_condition] || 'Unknown' }} </span>
             </div>
-            <div class="product-price ${p.free ? 'free' : ''}">{{p.free === true ? 'Free 🍊' : '$ ' + p.price }}</div>
+            <div class="product-price ${p.free ? 'free' : ''}">{{p.price == null || p.price == 0 ? 'Free' : '$ ' + p.price }}</div>
           </div>
           <div class="product-footer">
             <span class="time-stamp">
