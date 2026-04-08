@@ -262,8 +262,16 @@ app.post('/api/remove/favorites/products', async (req, res) => {
 
 app.get('/api/filter/products', async (req, res) => {
   try {
-    const { location, minPrice, maxPrice, condition, sort } = req.query;
+    const { keyword, city, location, minPrice, maxPrice, condition, sort } = req.query;
     let query = {};
+
+    if (keyword) {
+      query.title = { $regex: keyword, $options: 'i' };
+    }
+
+    if (city) {
+      query.city_name = { $regex: city, $options: 'i' };
+    }
 
     if (location) {
       query.location_name = { $regex: location, $options: 'i' };
@@ -275,7 +283,7 @@ app.get('/api/filter/products', async (req, res) => {
       if(maxPrice) query.price.$lte = parseInt(maxPrice);
     }
 
-    if (condition) {
+    if (condition && condition !== -1 && condition !== '-1') {
       query.product_condition = parseInt(condition);
     }
 

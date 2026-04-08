@@ -1,1 +1,42 @@
-<p>my-favourites works!</p>
+<div class="page" id="page-favourites">
+  <div class="container">
+    <div class="section-title">❤️ My Favourites</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+        <tr>
+          <th>Product</th>
+          <th>Location</th>
+          <th>Condition</th>
+          <th>Price</th>
+          <th>Available</th>
+          <th>Remove</th>
+        </tr>
+        </thead>
+        <tbody id="fav-tbody">
+          @for(f of favList; track f._id){
+            <tr [routerLink]="['/detailViewProduct', f._id]">
+              <td><strong>{{f.title}}</strong></td>
+              <td style="color:var(--text2);">{{f.location_name}}</td>
+              <td>{{ conditionLabel[f.product_condition] || 'Unknown' }}</td>
+              <td><strong>{{ f.giveaway ? 'Free' : '$ ' + f.price }}</strong></td>
+              <td style="color:var(--text2);">{{ f.date_avaliable | date:'MMM d, yyyy' }}</td>
+              <td>
+                <button class="fav-remove-btn" (click)="removeFav($event, f._id)">Remove</button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7">
+                <div class="empty-state">
+                  <div class="empty-icon">🤍</div>
+                  <p>No favorites yet</p>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -3,6 +3,7 @@ import { ProductsService } from '../../../services/products-service';
 import { RouterLink, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { FormsModule } from '@angular/forms';
+import { AlertService } from '../../../services/alert';
 
 @Component({
   selector: 'app-home',
@@ -15,11 +16,20 @@ export class Home  implements OnInit  {
   private productService = inject(ProductsService);
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
+  private alertService = inject(AlertService);
   products: any;
-  private userId = localStorage.getItem('user_id');
+  userId = JSON.parse(localStorage.getItem('loginUserData') || '{}')?._id;
+
+
+  conditionLabel: {[key: number]: string} = {
+    [-1]: '✨All',
+    0: '🌟 BNIB',
+    1: '💎 Like New',
+    2: '👍 Excellent',
+    3: '👌 Good'
+  };
 
   ngOnInit() {
-
     this.productService.getProducts().subscribe({
       next: (data) => {
         this.products = data;
@@ -31,11 +41,12 @@ export class Home  implements OnInit  {
                 ...p,
                 isFavourite: favIds.includes(p._id.toString())
               }));
+              this.cdr.detectChanges();
             }
-
           });
+        }else{
+          this.cdr.detectChanges();
         }
-        this.cdr.detectChanges();
       },
       error: (e) => console.log('fail : ', e)
     })
@@ -44,47 +55,24 @@ export class Home  implements OnInit  {
   setFav(event: Event, product: any){
     event.stopPropagation();
     if (!this.userId) {
-      Swal.fire({
-        html: `
-          <div style="font-size: 55px; margin-top: 5px;">🍊</div>
-          <div class="swal2-title" style="margin-bottom: 10px;">Sign-in Required</div>
-          <div class="swal2-html-container">Please log in to save your favorite items!</div>
-        `,
-        text: 'Please log in to add this item to your favorites!',
-        buttonsStyling: false,
-        customClass: {
-          confirmButton: 'swal2-confirm',
-          cancelButton: 'swal2-cancel',
-          popup: 'swal2-popup',
-          title: 'swal2-title',
-          htmlContainer: 'swal2-html-container'
-        },
-        showCancelButton: true,
-        confirmButtonText: 'Go to Login',
-        cancelButtonText: 'Maybe later',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.router.navigate(['/loginUser']);
-        }
-      });
+      this.alertService.showLoginRequired('Please log in to add this item to your favorites!');
       return;
     }
 
-    this.productService.setFavourite(product._id).subscribe({
+    this.productService.setFavourite(product._id, this.userId).subscribe({
       next: (res) => {
         product.isFavourite = res.isFavourite;
-
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Fail to set Favourite:', err)
     });
   }
 
-
-
+  searchKeyword: string | null = null;
   activeFilter: string | null = null;
+  selectedCity: string = '';
   selectedLocation: string = '';
-  selectedCondition: number | null = null;
+  selectedCondition: number = -1;
   minPrice: number | null = null;
   maxPrice: number | null = null;
 
@@ -101,7 +89,13 @@ export class Home  implements OnInit  {
   }
 
   setCity(city: string) {
-    this.selectedLocation = city;
+    this.selectedCity = city;
+    this.activeFilter = null;
+    this.loadProducts();
+  }
+
+  setLocation(location: string) {
+    this.selectedLocation = location;
     this.activeFilter = null;
     this.loadProducts();
   }
@@ -139,46 +133,60 @@ export class Home  implements OnInit  {
     const params: any = {
       sort: this.currentSort
     };
-    if (this.selectedLocation) params.location = this.selectedLocation;
+    if (this.searchKeyword) params.keyword = this.searchKeyword?.trim();
+    if (this.selectedCity) params.city = this.selectedCity?.toLowerCase().trim();
+    if (this.selectedLocation) params.location = this.selectedLocation?.toLowerCase().trim();
     if (this.minPrice) params.minPrice = this.minPrice;
     if (this.maxPrice) params.maxPrice = this.maxPrice;
     if (this.selectedCondition) params.condition = this.selectedCondition;
 
     this.productService.getFilteredProducts(params).subscribe((data: any) => {
-      this.products = data;
+      this.products = [...data];
       this.cdr.detectChanges();
     });
   }
 
-
   getRelativeTime(date: any): string {
     if (!date) return '';
 
-    const now = new Date();
-    const created = new Date(date);
-    const diffInSeconds = Math.floor((now.getTime() - created.getTime()) / 1000);
+    const diff = Date.now() - new Date(date).getTime();
+    const mins  = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days  = Math.floor(diff / 86400000);
 
-    if (diffInSeconds < 60) return 'Just now';
-
-    const diffInMinutes = Math.floor(diffInSeconds / 60);
-    if (diffInMinutes < 60) return `${diffInMinutes}m`;
-
-    const diffInHours = Math.floor(diffInMinutes / 60);
-    if (diffInHours < 24) return `${diffInHours}h`;
-
-    const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays < 30) return `${diffInDays}d`;
-
-    const diffInMonths = Math.floor(diffInDays / 30);
-    if (diffInMonths < 12) return `${diffInMonths}mo`;
-
-    return `${Math.floor(diffInMonths / 12)}y`;
+    if (mins  < 1)  return 'Just now';
+    if (mins  < 60) return `${mins}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    if (days  < 7)  return `${days}d ago`;
+    if (days  < 30) return `${Math.floor(days / 7)}w ago`;
+    return new Date(date).toLocaleDateString('en-CA', { month: 'short', day: 'numeric' });
   }
 
+  onSearch() {
+    this.loadProducts();
+  }
 
   goToRegister() {
+    if (!this.userId) {
+      this.alertService.showLoginRequired('Please log in to add new product!');
+      return;
+    }
     this.router.navigate(['/newproduct']);
   }
 
+  resetFilters() {
+    this.searchKeyword = '';
+    this.selectedCity = '';
+    this.selectedLocation = '';
+    this.minPrice = null;
+    this.maxPrice = null;
+    this.selectedCondition = -1;
+    this.currentSort = 'latest';
+
+    this.activeFilter = null;
+    this.loadProducts();
+
+    this.cdr.detectChanges();
+  }
 }
 
