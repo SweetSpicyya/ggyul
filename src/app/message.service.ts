@@ -14,11 +14,18 @@ export class MessageService {
   sendMessage(newMessage:any):Observable<any>{
     return this.http.post(`${this.apiUrl}/send`, newMessage);
   }
-  selectOwnerMessage(product_id:string, sender_id:string):Observable<any>{
+  selectUserMessage(product_id:string, sender_id:string):Observable<any>{
     return this.http.get(`${this.apiUrl}/getUserMessage`,{
       params: {
       product_id: product_id,
       sender_id: sender_id
+    }});
+  }
+  selectOwnerMessage(product_id:string, receiver_id:string):Observable<any>{
+    return this.http.get(`${this.apiUrl}/getOwnerMessage`,{
+      params: {
+      product_id: product_id,
+      sender_id: receiver_id
     }});
   }
   

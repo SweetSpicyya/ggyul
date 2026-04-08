@@ -48,13 +48,16 @@
           <!-- Owner -->
            @if(productOwner){
               <div class="message-list" id="message-list">
-                <div class="message-item">
+                <div class="message-item" *ngFor="let message of ownerMessageData">
                   <div class="message-header">
-                    <span class="message-sender">김민준 · minjun@email.com</span>
-                    <span class="message-time">2025.03.15 14:32</span>
+                    <span class="message-sender">{{message.senderFirstName}} {{message.senderLasttName}} · {{message.senderEmail}}</span>
+                    <span class="message-time">{{message.creation_time | date:'MMMM d, yyyy':'UTC' }}</span>
                   </div>
-                  <div class="message-content">혹시 직거래 가능한가요? 강남역 근처에 살고 있어서요!</div>
+                  <div class="message-content">{{message.content}}</div>
                 </div>
+              </div>
+              <div id="msg-owner-note" style="display: block; font-size:13px; color:var(--text3); text-align:center; padding:8px;">
+                Inquiry Message for me.
               </div>
            } @else {
             <!-- Non-owner: send message -->
@@ -68,7 +71,7 @@
               <div class="message-item" *ngFor="let message of messageData">
                 <div class="message-header">
                   <span class="message-sender">{{message.senderFirstName}} {{message.senderLasttName}} · {{message.senderEmail}}</span>
-                  <span class="message-time">{{message.creation_time}}</span>
+                  <span class="message-time">{{message.creation_time | date:'MMMM d, yyyy':'UTC'  }}</span>
                 </div>
                 <div class="message-content">{{message.content}}</div>
               </div>
@@ -81,9 +84,7 @@
               </div> -->
             </div>
             <!-- Owner sees note instead -->
-            <div id="msg-owner-note" style="display:none; font-size:13px; color:var(--text3); text-align:center; padding:8px;">
-              Inquiry Message for me.
-            </div>
+            
           }
            
           
@@ -101,7 +102,7 @@
             </div>
           </div>
           <div style="display:flex;flex-direction:column;gap:10px;">
-            <button class="btn-primary" style="width:100%;">Send a Message</button>
+            <!-- <button class="btn-primary" style="width:100%;">Send a Message</button> -->
             @if(userId == product?.user_id){
               <button class="btn-secondary" style="width:100%;" id="view-edit-btn" [routerLink]="['/editMyProduct', product._id]">✏️ Edit</button>
             }

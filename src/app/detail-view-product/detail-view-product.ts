@@ -7,10 +7,11 @@ import Swal from 'sweetalert2';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../user.service';
 import { MessageService } from '../message.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-detail-view-product',
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule,DatePipe],
   templateUrl: './detail-view-product.html',
   styleUrl: './detail-view-product.css',
   standalone: true,
@@ -28,6 +29,7 @@ export class DetailViewProduct implements OnInit {
   productOwner:boolean = false;
   messageContent:string = '';
   messageData:any[] = [];
+  ownerMessageData:any[] = [];
 
   ngOnInit() {
     const pId = this.route.snapshot.paramMap.get('id');
@@ -43,18 +45,21 @@ export class DetailViewProduct implements OnInit {
                   ...this.product,
                   isFavourite: favIds.includes(pId)
                 };
-                this.cdr.detectChanges();
-                this.checkUser();
+                // this.cdr.detectChanges();
+                // this.checkUser();
+                this.safeCheckUser();
               },
               error: (e: any) => {
                 console.error('fail to load data:', e);
-                this.cdr.detectChanges();
+                // this.cdr.detectChanges();
+                this.safeCheckUser();
               }
             });
           }else{
             this.product.isFavourite = false;
-            this.cdr.detectChanges();
-            this.checkUser();
+            // this.cdr.detectChanges();
+            // this.checkUser();
+            this.safeCheckUser();
           }
         },
         error: (e) => console.log('fail : ', e)
@@ -117,6 +122,13 @@ export class DetailViewProduct implements OnInit {
       error: (err) => console.error('Fail to set Favourite:', err)
     });
   }
+
+  private safeCheckUser() {
+    setTimeout(() => {
+      this.checkUser();
+      this.cdr.detectChanges();
+    }, 0);
+  }
   checkUser(){
     console.log("check login user data : " + JSON.stringify(this.loginUserData));
     console.log("check product data : " + JSON.stringify(this.product));
@@ -124,6 +136,7 @@ export class DetailViewProduct implements OnInit {
 
     if(this.loginUserData._id == this.product.user_id){
       this.productOwner = true;
+      this.getOwnerMessageData();
       
     } else {
       this.productOwner=false;
@@ -159,10 +172,25 @@ export class DetailViewProduct implements OnInit {
   }
   getUserMessageData(){
     console.log('not a owener, login user');
-    this.messageService.selectOwnerMessage(this.product._id, this.loginUserData._id).subscribe({
+    this.messageService.selectUserMessage(this.product._id, this.loginUserData._id).subscribe({
       next:(res)=>{
         console.log('get user send message '+res.result); 
         this.messageData = res.result; 
+        this.cdr.detectChanges();
+      },
+      error:(err)=>{
+        alert('get user message fail');
+        console.log(err);
+      }
+    })
+  }
+
+  getOwnerMessageData(){
+    console.log('im a owener, login user');
+    this.messageService.selectOwnerMessage(this.product._id, this.loginUserData._id).subscribe({
+      next:(res)=>{
+        console.log('get user send message '+res.result); 
+        this.ownerMessageData = res.result; 
         this.cdr.detectChanges();
       },
       error:(err)=>{

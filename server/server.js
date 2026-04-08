@@ -580,6 +580,53 @@ app.get('/api/message/getUserMessage',async(req,res)=>{
     console.log('get all mesage error : ' + err);
   }
 })
+app.get('/api/message/getOwnerMessage',async(req,res)=>{
+  try{
+    await client.connect();
+    const database = client.db('ggyual_database');
+    const collection = database.collection('message');
+
+    const {product_id, receiver_id} = req.query;
+    const pipeline = [];
+    
+    const matchCondition = {};
+    if(product_id) matchCondition.product_id = product_id;
+    if(receiver_id) matchCondition.sender_id = receiver_id;
+    if (Object.keys(matchCondition).length > 0) {
+      pipeline.push({ $match: matchCondition });
+    }
+    pipeline.push({
+      $addFields:{
+        sender_obj_id : {$toObjectId:'$sender_id' }
+      }
+    });
+    pipeline.push({
+      $lookup:{
+        from:'user',
+        localField:'sender_obj_id',
+        foreignField:'_id',
+        as:'senderInfo'
+      }
+    });
+    pipeline.push({
+      $project:{
+        _id:1,
+        content:1,
+        product_id:1,
+        sender_id:1,
+        creation_time:1,
+        senderFirstName:'$senderInfo.first_name',
+        senderLasttName:'$senderInfo.last_name',
+        senderEmail:'$senderInfo.email'
+      }
+    });
+    const result = await collection.aggregate(pipeline).toArray();
+    console.log("successfully get all message : ", result);
+    res.status(200).json({ message: "selected all message data !", result : result});
+  }catch(err){
+    console.log('get all own mesage error : ' + err);
+  }
+})
 app.listen(port, () => {
   console.log(`✅ It's on http://localhost:${port}.`);
 });
