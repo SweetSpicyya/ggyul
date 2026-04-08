@@ -14,7 +14,7 @@ import Swal from 'sweetalert2';
 export class ViewMyProduct implements OnInit {
   private productService = inject(ProductsService);
   private cdr = inject(ChangeDetectorRef);
-  userId = localStorage.getItem('user_id');
+  userId = JSON.parse(localStorage.getItem('loginUserData') || '{}')?._id;
   products: any[] = [];
 
   conditionLabel: {[key: number]: string} = {

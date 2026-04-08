@@ -1,0 +1,7 @@
+.fav-remove-btn {
+  background: var(--gyul-pale); color: var(--gyul-dark);
+  border: none; border-radius: 8px; padding: 6px 12px;
+  font-size: 12px; font-weight: 500; cursor: pointer;
+  font-family: var(--font-body); transition: background 0.15s;
+}
+.fav-remove-btn:hover { background: #FFD9C7; }

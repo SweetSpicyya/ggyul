@@ -15,18 +15,67 @@
             </div>
             <div class="form-group">
               <label class="label">City</label>
-              <input type="text" class="input-field" formControlName="city" placeholder="Vancouver">
-              @if(registerForm.get('city')?.hasError('required') && registerForm.get('city')?.touched){
-                <mat-error class="custom-error">This field is required</mat-error>
+              <div class="dropdown-row">
+                <div class="dropdown-chip input-product"
+                     [class.active]="registerForm.get('city')?.value"
+                     (click)="toggleSelect($event, 'city')">
+                  {{ registerForm.get('city')?.value || 'Select City' }}
+                  <span class="arrow">▾</span>
+
+                  @if(activeFilter === 'city') {
+                    <ul class="gul-dropdown input-product-dropdown" (click)="$event.stopPropagation()">
+                      <li (click)="setCity($event, '')">None</li>
+                      <li (click)="setCity($event, 'vancouver')">Vancouver</li>
+                      <li (click)="setCity($event, 'seoul')">Seoul</li>
+                    </ul>
+                  }
+                </div>
+              </div>
+
+              @if(registerForm.get('city')?.invalid && registerForm.get('city')?.touched){
+                <mat-error class="custom-error">Please select a city</mat-error>
               }
             </div>
+
+
             <div class="form-group">
               <label class="label">Location</label>
-              <input type="text" class="input-field" formControlName="location" placeholder="Richmond">
-              @if(registerForm.get('location')?.hasError('required') && registerForm.get('location')?.touched){
-                <mat-error class="custom-error">This field is required</mat-error>
+              <div class="dropdown-row">
+                <div class="dropdown-chip input-product"
+                     [class.active]="registerForm.get('location')?.value"
+                     (click)="toggleSelect($event, 'location')">
+
+                  {{ registerForm.get('location')?.value || 'Select Location' }}
+                  <span class="arrow">▾</span>
+
+                  @if(activeFilter === 'location') {
+                    <ul class="gul-dropdown input-product-dropdown" (click)="$event.stopPropagation()">
+                      @if(registerForm.get('city')?.value === 'vancouver'){
+                        <li (click)="setLocation($event, 'burnaby')">Burnaby</li>
+                        <li (click)="setLocation($event, 'coquitlam')">Coquitlam</li>
+                        <li (click)="setLocation($event, 'downtown')">Downtown</li>
+                        <li (click)="setLocation($event, 'richmond')">Richmond</li>
+                        <li (click)="setLocation($event, 'vancouver')">Vancouver</li>
+                      }
+                      @else if (registerForm.get('city')?.value === 'seoul'){
+                        <li (click)="setLocation($event, '은평구')">은평구</li>
+                        <li (click)="setLocation($event, '종로구')">종로구</li>
+                        <li (click)="setLocation($event, '강남구')">강남구</li>
+                        <li (click)="setLocation($event, '송파구')">송파구</li>
+                      }
+                      @else {
+                        <li style="color: #999; padding: 10px; text-transform: none;">Please select a city first</li>
+                      }
+                    </ul>
+                  }
+                </div>
+              </div>
+
+              @if(registerForm.get('location')?.invalid && registerForm.get('location')?.touched){
+                <mat-error class="custom-error">Please select a location</mat-error>
               }
             </div>
+
             <div class="form-group">
               <label class="label">Price (CAD)</label>
               <input type="number" class="input-field" formControlName="price" placeholder="0">
@@ -79,14 +128,25 @@
               }
             </div>
 
-
             <div class="form-group">
-              <label class="label">GIVEAWAY</label>
-              <select class="input-field" formControlName="giveaway">>
-                <option [ngValue]="false">No</option>
-                <option [ngValue]="true">Yes</option>
-              </select>
+              <label class="label">Giveaway</label>
+              <div class="dropdown-row">
+                <div class="dropdown-chip input-product"
+                     [class.active]="registerForm.get('giveaway')?.value"
+                     (click)="toggleSelect($event, 'giveaway')">
+                  {{ registerForm.get('giveaway')?.value ? 'Yes' : 'No' }}
+                  <span class="arrow">▾</span>
+
+                  @if(activeFilter === 'giveaway') {
+                    <ul class="gul-dropdown input-product-dropdown" (click)="$event.stopPropagation()">
+                      <li (click)="setGiveaway($event, false)">No</li>
+                      <li (click)="setGiveaway($event, true)">Yes</li>
+                    </ul>
+                  }
+                </div>
+              </div>
             </div>
+
           </div>
           <div style="display:flex;gap:12px;margin-top:8px;">
             <button class="btn-secondary" style="flex:1;" (click)="goToHome()">Cancel</button>

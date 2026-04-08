@@ -3,7 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { ProductsService } from '../../../services/products-service';
 import { CommonModule } from '@angular/common';
-import Swal from 'sweetalert2';
+import { AlertService } from '../../../services/alert';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../user.service';
 import { MessageService } from '../message.service';
@@ -21,10 +21,11 @@ export class DetailViewProduct implements OnInit {
   private productService = inject(ProductsService);
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
+  private alertService = inject(AlertService);
   private userService = inject(UserService);
   private messageService = inject(MessageService);
   product: any;
-  userId = localStorage.getItem('user_id');
+  userId = JSON.parse(localStorage.getItem('loginUserData') || '{}')?._id;
   loginUserData:any = null;
   productOwner:boolean = false;
   messageContent:string = '';
@@ -87,34 +88,13 @@ export class DetailViewProduct implements OnInit {
 
   setFav(event: Event, product: any){
     event.stopPropagation();
+
     if (!this.userId) {
-      Swal.fire({
-        html: `
-          <div style="font-size: 55px; margin-top: 5px;">🍊</div>
-          <div class="swal2-title" style="margin-bottom: 10px;">Sign-in Required</div>
-          <div class="swal2-html-container">Please log in to save your favorite items!</div>
-        `,
-        text: 'Please log in to add this item to your favorites!',
-        buttonsStyling: false,
-        customClass: {
-          confirmButton: 'swal2-confirm',
-          cancelButton: 'swal2-cancel',
-          popup: 'swal2-popup',
-          title: 'swal2-title',
-          htmlContainer: 'swal2-html-container'
-        },
-        showCancelButton: true,
-        confirmButtonText: 'Go to Login',
-        cancelButtonText: 'Maybe later',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.router.navigate(['/loginUser']);
-        }
-      });
+      this.alertService.showLoginRequired('Please log in to add new product!');
       return;
     }
 
-    this.productService.setFavourite(product._id).subscribe({
+    this.productService.setFavourite(product._id, this.userId).subscribe({
       next: (res) => {
         product.isFavourite = res.isFavourite;
         this.cdr.detectChanges();

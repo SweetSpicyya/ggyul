@@ -7,7 +7,7 @@
         @if(product){
           <div class="form-card">
             <div class="product-view-title" id="view-title">{{product.title}}</div>
-            <div class="product-view-price" id="view-price">$ {{product.price}}</div>
+            <div class="product-view-price" id="view-price">{{product.price == null || product.price == 0 ? 'Free' : '$ ' + product.price }}</div>
             <div class="product-props" id="view-props">
               <div class="prop-row"><span class="prop-key">City</span><span class="prop-val">{{product.city_name}}</span></div>
               <div class="prop-row"><span class="prop-key">Location</span><span class="prop-val">{{product.location_name}}</span></div>

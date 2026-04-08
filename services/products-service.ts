@@ -25,9 +25,7 @@ export class ProductsService {
     return this.http.put(`${this.apiUrl}/api/updateproduct/${id}`, data);
   }
 
-  setFavourite(productId: string): Observable<any>{
-    const userId = localStorage.getItem('user_id');
-
+  setFavourite(productId: string, userId: string): Observable<any>{
     return this.http.post(`${this.apiUrl}/api/favourites`,{
       productId,
       userId
@@ -42,8 +40,7 @@ export class ProductsService {
     return this.http.get<any[]>(`${this.apiUrl}/api/favorites/products/${userId}`);
   }
 
-  removeFavourite(productId: string): Observable<any>{
-    const userId = localStorage.getItem('user_id');
+  removeFavourite(productId: string, userId: string): Observable<any>{
     return this.http.post<any[]>(`${this.apiUrl}/api/remove/favorites/products`, {
       productId,
       userId
