@@ -12,7 +12,12 @@
   padding: 24px; box-shadow: var(--shadow); border: 1px solid var(--border);
   height: fit-content;
 }
-.product-view-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+.product-view-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 13px;
+  text-transform: capitalize;
+}
 .product-view-price {
   font-size: 26px; font-weight: 700; color: var(--gyul);
   font-family: var(--font-display); margin-bottom: 16px;
@@ -34,3 +39,23 @@
   justify-content: center; font-size: 30px;
   border: 1px solid var(--border);
 }
+
+/* Messages */
+  .messages-panel {
+    background: var(--surface); border-radius: var(--radius);
+    padding: 24px; box-shadow: var(--shadow); border: 1px solid var(--border);
+    margin-top: 20px;
+  }
+  .messages-panel h3 { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+  .message-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+  .message-item {
+    background: var(--surface2); border-radius: 12px; padding: 14px;
+  }
+  .message-header {
+    display: flex; justify-content: space-between; margin-bottom: 6px;
+  }
+  .message-sender { font-size: 13px; font-weight: 500; color: var(--text); }
+  .message-time { font-size: 11px; color: var(--text3); }
+  .message-content { font-size: 14px; color: var(--text2); line-height: 1.5; }
+  .message-input-row { display: flex; gap: 10px; }
+  .message-input-row input { flex: 1; }

@@ -1,1 +1,61 @@
-<p>view-my-product works!</p>
+<div class="page" id="page-my-items">
+  <div class="container">
+    <div class="my-items-header">
+      <div class="section-title">📦 Manage My Products</div>
+      <button class="btn-primary" [routerLink]="['/newproduct']">+ Add yours</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+        <tr>
+          <th>Products</th>
+          <th>Location</th>
+          <th>Condition</th>
+          <th>Price</th>
+          <th>Giveaway</th>
+          <th>Available</th>
+          <th>Manage</th>
+        </tr>
+        </thead>
+        <tbody id="my-items-tbody">
+        @for(p of products; track p._id){
+        <tr>
+          <td><strong>{{ p.title }}</strong></td>
+
+              <td style="color:var(--text2);">{{ p.location_name }}</td>
+
+              <td>{{ conditionLabel[p.product_condition] || 'Unknown' }}</td>
+
+              <td>
+                <strong>
+        {{ p.giveaway ? 'Free' : '$ ' + p.price }}
+        </strong>
+      </td>
+
+        <td>{{ p.giveaway ? '✅' : '—' }}</td>
+          <td style="color:var(--text2);">
+        {{ p.date_avaliable | date:'MMM d, yyyy' }}
+        </td>
+
+        <td class="td-actions">
+          <button class="btn-ghost btn-sm" [routerLink]="['/detailViewProduct', p._id]">Details</button>
+          <button class="btn-ghost btn-sm" [routerLink]="['/editMyProduct', p._id]">Update</button>
+          <button class="btn-danger btn-sm" (click)="deleteProduct(p._id)">Trash</button>
+        </td>
+      </tr>
+        } @empty {
+        <tr>
+          <td colspan="7">
+            <div class="empty-state">
+              <div class="empty-icon">📦</div>
+              <p>You haven't added any items yet</p>
+            </div>
+          </td>
+        </tr>
+        }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

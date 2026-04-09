@@ -1,1 +1,158 @@
-<p>home works!</p>
+<div class="page" id="page-home">
+  <div class="container">
+    <!-- Search -->
+    <div class="search-bar">
+      <span>🔍</span>
+      <input
+        type="text"
+        [(ngModel)]="searchKeyword"
+        (keyup.enter)="onSearch()"
+        placeholder="Search items in Vancouver..."
+        class="search-input"
+      >
+      <button class="btn-primary btn-sm" (click)="onSearch()">Search</button>
+    </div>
+
+    <!-- Filters -->
+    <div class="dropdown-row">
+      <div class="dropdown-chip"
+           [class.active]="selectedCity"
+           (click)="toggleFilter($event, 'city')">
+        🏙️ {{ selectedCity !== '' ? selectedCity : 'City' }} <span class="arrow">▾</span>
+
+        @if(activeFilter === 'city') {
+          <ul class="gul-dropdown" (click)="$event.stopPropagation()">
+            <li (click)="setCity('')">All</li>
+            <li (click)="setCity('vancouver')">Vancouver</li>
+            <li (click)="setCity('seoul')">Seoul</li>
+          </ul>
+        }
+      </div>
+
+      <div class="dropdown-chip"
+           [class.active]="selectedLocation"
+           (click)="toggleFilter($event, 'location')">
+        📍 {{ selectedLocation !== '' ? selectedLocation : 'Location' }} <span class="arrow">▾</span>
+
+        @if(activeFilter === 'location') {
+          <ul class="gul-dropdown" (click)="$event.stopPropagation()">
+            @if(this.selectedCity === 'vancouver'){
+              <li (click)="setLocation('')">All</li>
+              <li (click)="setLocation('burnaby')">Burnaby</li>
+              <li (click)="setLocation('coquitlam')">Coquitlam</li>
+              <li (click)="setLocation('downtown')">Downtown</li>
+              <li (click)="setLocation('richmond')">Richmond</li>
+            }
+            @else if (this.selectedCity === 'seoul'){
+              <li (click)="setLocation('')">All</li>
+              <li (click)="setLocation('은평구')">은평구</li>
+              <li (click)="setLocation('종로구')">종로구</li>
+              <li (click)="setLocation('강남구')">강남구</li>
+              <li (click)="setLocation('송파구')">송파구</li>
+            }
+            @else {
+              <li style="color: #999; padding: 10px; text-transform: none;">Select a city first</li>
+            }
+          </ul>
+        }
+      </div>
+
+      <div class="dropdown-chip" (click)="toggleFilter($event, 'price')">
+        💰 {{ getPriceLabel() }} <span>▾</span>
+
+        @if(activeFilter === 'price') {
+          <div class="gul-dropdown price-filter" (click)="$event.stopPropagation()">
+            <div class="price-inputs">
+              <input type="number" [(ngModel)]="minPrice" placeholder="Min ($)">
+              <span>-</span>
+              <input type="number" [(ngModel)]="maxPrice" placeholder="Max ($)">
+            </div>
+            <button class="apply-btn" (click)="setPrice()">Apply</button>
+          </div>
+        }
+      </div>
+
+      <div class="dropdown-chip"
+           [class.active]="selectedCondition"
+           (click)="toggleFilter($event, 'condition')">
+          {{ selectedCondition == -1 ? '✨ Condition' : conditionLabel[selectedCondition] }}
+        <span class="arrow">▾</span>
+
+        @if(activeFilter === 'condition') {
+          <ul class="gul-dropdown" (click)="$event.stopPropagation()">
+            <li (click)="setCondition(-1)">All</li>
+            <li (click)="setCondition(0)">🌟 BNIB</li>
+            <li (click)="setCondition(1)">💎 Like New</li>
+            <li (click)="setCondition(2)">👍 Excellent</li>
+            <li (click)="setCondition(3)">👌 Good</li>
+          </ul>
+        }
+      </div>
+
+      <div class="filter-actions">
+        <button class="reset-btn" (click)="resetFilters()">
+          <span class="icon">🔄</span> Reset All
+        </button>
+      </div>
+    </div>
+
+
+    <!-- Sort -->
+    <div class="sort-row">
+      <span class="sort-label">Sort by:</span>
+      <button class="sort-btn" [class.active]="currentSort === 'newest'" (click)="setSort('newest')">Newest</button>
+      <button class="sort-btn" [class.active]="currentSort === 'priceLow'" (click)="setSort('priceLow')">Lowest Price</button>
+      <button class="sort-btn" [class.active]="currentSort === 'priceHigh'" (click)="setSort('priceHigh')">Highest Price</button>
+    </div>
+
+    <div class="info-section">
+      <div class="section-title-items">
+        {{ products?.length || 0 }} items
+      </div>
+      <div class="button-wrap">
+        <button class="btn-primary btn-add-p" (click)="goToRegister()">
+          + Add yours
+        </button>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-grid" id="products-grid">
+      @for(p of products; track p._id){
+        <div class="product-card" [routerLink]="['/detailViewProduct', p._id]">
+          <div class="product-body">
+            <div class="product-title">{{p.title}}</div>
+            <div class="product-meta">
+              <span>📍 {{p.location_name}}</span>
+              <span>·</span>
+              <span> {{ conditionLabel[p.product_condition] || 'Unknown' }} </span>
+            </div>
+            <div class="product-price ${p.free ? 'free' : ''}">{{p.price == null || p.price == 0 ? 'Free' : '$ ' + p.price }}</div>
+          </div>
+          <div class="product-footer">
+            <span class="time-stamp">
+              {{ getRelativeTime(p.createdAt) }}
+            </span>
+            <button
+              class="fav-btn"
+              [class.active]="p.isFavourite"
+              (click)="setFav($event, p)">
+              {{ p.isFavourite ? '❤️' : '🤍' }}
+            </button>
+          </div>
+        </div>
+      } @empty {
+        <div class="empty-products">
+          <div class="empty-illustration">
+            <div class="tangerine-wrap">
+              <span class="tangerine">🍊</span>
+              <div class="tangerine-shadow"></div>
+            </div>
+          </div>
+          <p class="empty-title">No items available</p>
+          <button class="btn-primary" (click)="goToRegister()">+ Add yours</button>
+        </div>
+      }
+    </div>
+  </div>
+</div>

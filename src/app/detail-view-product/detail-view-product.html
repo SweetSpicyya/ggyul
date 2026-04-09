@@ -5,10 +5,9 @@
     <div class="product-view-layout">
       <div>
         @if(product){
-          <div class="product-view-img" id="view-img">📱</div>
-          <div class="form-card" style="margin-top:16px;">
+          <div class="form-card">
             <div class="product-view-title" id="view-title">{{product.title}}</div>
-            <div class="product-view-price" id="view-price">$ {{product.price}}</div>
+            <div class="product-view-price" id="view-price">{{product.price == null || product.price == 0 ? 'Free' : '$ ' + product.price }}</div>
             <div class="product-props" id="view-props">
               <div class="prop-row"><span class="prop-key">City</span><span class="prop-val">{{product.city_name}}</span></div>
               <div class="prop-row"><span class="prop-key">Location</span><span class="prop-val">{{product.location_name}}</span></div>
@@ -24,11 +23,11 @@
                   <span class="badge badge-gray">👌 Good</span>
                 }
               </span></div>
-              <div class="prop-row"><span class="prop-key">GIVEAWAY</span>
+              <div class="prop-row"><span class="prop-key">Giveaway</span>
                 @if(product.giveaway === true){
                   <span class="prop-val">🙆‍ Yes It's FREE!</span>
                 } @else if (product.giveaway === false){
-                  <span class="prop-val">NOPE 🙅</span>
+                  <span class="prop-val">Nope 🙅</span>
                 }
               </div>
               <div class="prop-row"><span class="prop-key">Available</span>
@@ -43,21 +42,52 @@
           </div>
         }
 
-
         <!-- Messages -->
         <div class="messages-panel">
-          <h3>💬 문의 메시지</h3>
-          <!-- Non-owner: send message -->
-          <div id="msg-send-area">
-            <div class="message-input-row">
-              <input type="text" class="input-field" placeholder="판매자에게 문의하기..." id="msg-input">
-              <button class="btn-primary btn-sm" onclick="sendMessage()">전송</button>
+          <h3>💬 Inquiry Message</h3>
+          <!-- Owner -->
+           @if(productOwner){
+              <div class="message-list" id="message-list">
+                <div class="message-item" *ngFor="let message of ownerMessageData">
+                  <div class="message-header">
+                    <span class="message-sender">{{message.senderFirstName}} {{message.senderLasttName}} · {{message.senderEmail}}</span>
+                    <span class="message-time">{{message.creation_time | date:'MMMM d, yyyy':'UTC' }}</span>
+                  </div>
+                  <div class="message-content">{{message.content}}</div>
+                </div>
+              </div>
+              <div id="msg-owner-note" style="display: block; font-size:13px; color:var(--text3); text-align:center; padding:8px;">
+                Inquiry Message for me.
+              </div>
+           } @else {
+            <!-- Non-owner: send message -->
+            <div id="msg-send-area">
+              <div class="message-input-row">
+                <input type="text" class="input-field" placeholder="Send the message to seller..." id="msg-input" [(ngModel)]="messageContent" >
+                <button class="btn-primary btn-sm" (click)="sendMessage()">Send</button>
+              </div>
             </div>
-          </div>
-          <!-- Owner sees note instead -->
-          <div id="msg-owner-note" style="display:none; font-size:13px; color:var(--text3); text-align:center; padding:8px;">
-            내 물건에 온 문의 메시지입니다.
-          </div>
+            <div class="message-list" id="message-list" style="margin-top: 10px;">
+              <div class="message-item" *ngFor="let message of messageData">
+                <div class="message-header">
+                  <span class="message-sender">{{message.senderFirstName}} {{message.senderLasttName}} · {{message.senderEmail}}</span>
+                  <span class="message-time">{{message.creation_time | date:'MMMM d, yyyy':'UTC'  }}</span>
+                </div>
+                <div class="message-content">{{message.content}}</div>
+              </div>
+              <!-- <div class="message-item">
+                <div class="message-header">
+                  <span class="message-sender">이서연 · seoyeon@email.com</span>
+                  <span class="message-time">2025.03.15 16:07</span>
+                </div>
+                <div class="message-content">배터리 상태가 어떻게 되나요? 혹시 케이스도 포함인가요?</div>
+              </div> -->
+            </div>
+            <!-- Owner sees note instead -->
+            
+          }
+           
+          
         </div>
       </div>
 
@@ -67,23 +97,25 @@
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
             <div style="width:44px;height:44px;border-radius:50%;background:var(--gyul-pale);display:flex;align-items:center;justify-content:center;font-size:20px;">🍊</div>
             <div>
-              <div style="font-size:15px;font-weight:600;">김지수</div>
-              <div style="font-size:12px;color:var(--text3);">jisu@email.com</div>
+              <div style="font-size:15px;font-weight:600;">{{ product?.seller.first_name + product?.seller.last_name}}</div>
+              <div style="font-size:12px;color:var(--text3);">{{ product?.seller.email }}</div>
             </div>
           </div>
           <div style="display:flex;flex-direction:column;gap:10px;">
-            <button class="btn-primary" style="width:100%;">채팅으로 문의하기</button>
-            <button class="btn-secondary" style="width:100%;" id="view-edit-btn" onclick="showPage('edit-item')">✏️ 수정하기</button>
-            <button class="fav-btn" style="padding:10px;width:100%;border-radius:10px;background:var(--surface2);font-size:14px;" id="view-fav-btn" onclick="toggleViewFav()">
-              🤍 찜하기
+            <!-- <button class="btn-primary" style="width:100%;">Send a Message</button> -->
+            @if(userId == product?.user_id){
+              <button class="btn-secondary" style="width:100%;" id="view-edit-btn" [routerLink]="['/editMyProduct', product._id]">✏️ Edit</button>
+            }
+            <button class="fav-btn" style="padding:12px 24px;width:100%;border-radius:10px;background:var(--surface2);font-size:14px;" id="view-fav-btn" (click)="setFav($event, product)">
+              {{ product?.isFavourite ? '❤️' : '🤍' }} Favourite
             </button>
           </div>
         </div>
         <div class="product-view-card" style="margin-top:12px;">
           <div style="font-size:13px;color:var(--text3);line-height:1.8;">
-            <div>🛡 안전한 직거래를 권장해요</div>
-            <div>💬 문의 전 게시글을 꼭 확인하세요</div>
-            <div>⚠️ 사기 의심 시 신고해주세요</div>
+            <div>🛡 In-person transactions are recommended.</div>
+            <div>💬 Check the item details before inquiring.</div>
+            <div>⚠️ Report if you suspect a scam.</div>
           </div>
         </div>
       </div>
