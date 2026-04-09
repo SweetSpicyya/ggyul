@@ -279,6 +279,26 @@ td:last-child {
   box-sizing: border-box;
 }
 
+
+/* ── DatePicker ── */
+.datepicker-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.datepicker-wrapper .input-field {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.datepicker-wrapper mat-datepicker-toggle {
+  position: absolute;
+  right: 5px;
+  color: #FF6B2B;
+}
+
+
 /* ── SweetAlert2 ── */
 .swal2-popup {
   border-radius: 20px;

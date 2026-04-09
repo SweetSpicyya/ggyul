@@ -12,7 +12,12 @@
   padding: 24px; box-shadow: var(--shadow); border: 1px solid var(--border);
   height: fit-content;
 }
-.product-view-title { font-size: 22px; font-weight: 700; margin-bottom: 13px; }
+.product-view-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 13px;
+  text-transform: capitalize;
+}
 .product-view-price {
   font-size: 26px; font-weight: 700; color: var(--gyul);
   font-family: var(--font-display); margin-bottom: 16px;
