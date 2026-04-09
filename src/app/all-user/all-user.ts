@@ -18,12 +18,13 @@ export class AllUser {
   filterParams:any={
     admin: '', 
     ageRange: '', 
-    itemCount: 0,
+    itemCount: '',
     sortBy: 'first_name',
     order: 'asc'
   }
   getAllUserData:any[] =[];
   activeFilter: string = '';
+  sumAdmin:number = 0;
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
@@ -66,7 +67,14 @@ export class AllUser {
       next:(res)=>{
         console.log('select all user data : '+JSON.stringify(res));
         
-        this.getAllUserData = res.result || [];
+        if(res.result){
+          this.getAllUserData = res.result;
+          this.sumAdmin = this.getAllUserData.reduce((acc, cur) => {
+            if (cur.admin == 'ADMIN') return acc+1;
+            return acc;
+          }, 0);
+        }
+        
         console.log('get user all data : ' + res.result);
         this.cdr.detectChanges();
       },
